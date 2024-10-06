@@ -1,0 +1,38 @@
+---
+const navLinks = [
+    { name: "Live", href: "/" },
+    { name: "Playback", href: "/playback" },
+    { name: "Events", href: "/events" },
+    { name: "Gallery", href: "/gallery" },
+    { name: "Configuration", href: "/configuration" },
+    { name: "Reports", href: "/reports" },
+];
+---
+
+<div class="mx-auto w-full flex justify-between items-center h-full">
+    <div class="flex items-center space-x-3">
+        <!-- <img src="/images/green.svg" alt="LENS View Logo" class="h-8"  /> -->
+    </div>
+
+    <nav class="hidden md:flex space-x-4">
+        {
+            navLinks.map((link) => (
+                <a
+                    href={link.href}
+                    class={`text-sm transition-all px-3 py-2 rounded-md
+                    ${
+                        Astro.url.pathname === link.href
+                            ? "font-medium bg-gray-200 text-black"
+                            : "font-normal text-gray-600 hover:bg-gray-100 hover:text-black"
+                    }`}
+                >
+                    {link.name}
+                </a>
+            ))
+        }
+    </nav>
+
+    <div class="hidden md:flex items-center space-x-2">
+        <span class="text-sm font-medium">Debayan Deb</span>
+    </div>
+</div>

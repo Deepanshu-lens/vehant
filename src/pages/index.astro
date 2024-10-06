@@ -1,0 +1,45 @@
+---
+import Layout from "../layouts/Layout.astro";
+import StreamTileSvelte from "../components/Stream/StreamTile.svelte";
+import StreamTile from "../components/Stream/StreamTile.astro";
+import StreamTileNonCustom from "../components/Stream/StreamTileNonCustom.astro";
+import StreamTileHTTP from "../components/Stream/StreamTileHTTP.astro";
+import SimpleTile from "../components/Stream/SimpleTile.svelte";
+import Test from "../components/Stream/Test.svelte";
+const urls = [
+    // "ws://18.218.162.33:8082/api/ws?src=hiolz776f44s7me&nodeID=1&cn=nvrCam%2034",
+    "ws://18.221.34.208:8081/api/ws?src=h2c3j3kn1erul8y",
+    "ws://18.221.34.208:8080/api/ws?src=h2c3j3kn1erul8y",
+    // "ws://18.218.162.33:8082/api/ws?src=yb2e1nm0e0u82tj&nodeID=1&cn=nvrCam%2033",
+    // "ws://18.218.162.33:8082/api/ws?src=wcbn9g1sqgz04l4&nodeID=1&cn=nvrCam%2028",
+    // "ws://18.218.162.33:8082/api/ws?src=k3luhvyftqqb5vg&nodeID=1&cn=nvrCam%2032",
+    // "ws://18.218.162.33:8082/api/ws?src=tk0of2130hku2a2&nodeID=1&cn=nvrCam%2031",
+    // "ws://18.218.162.33:8082/api/ws?src=mj3t5q7i526760m&nodeID=1&cn=nvrCam%2030",
+    // "ws://18.218.162.33:8082/api/ws?src=43hzdj2oz4t3zay&nodeID=1&cn=nvrCam%2029",
+    // "ws://18.221.34.208:8080/api/ws?src=h2c3j3kn1erul8y",
+];
+---
+
+<Layout title="LENS View">
+    <main>
+        <div class="grid grid-cols-2 gap-4 p-4">
+            <!-- <StreamTileSvelte url={urls[0]} client:only="svelte" /> -->
+            <StreamTileNonCustom url={urls[0]} />
+            <!-- <div class="flex flex-col">
+                Customized WebRTC <StreamTile url={urls[1]} />
+            </div> -->
+            <!-- {urls.map((url, index) => <StreamTileHTTP url={url} />)} -->
+            <!-- {urls.map((url) => <SimpleTile url={url} client:only="svelte" />)} -->
+        </div>
+    </main>
+</Layout>
+<!-- <script>
+    if (typeof window !== "undefined") {
+        document.addEventListener("DOMContentLoaded", () => {
+            const websiteLoadTime = window.performance.now(); // Capture time after page load
+            // @ts-expect-error
+            window.websiteLoadTime = websiteLoadTime;
+            console.log("Website load time:", websiteLoadTime);
+        });
+    }
+</script> -->
