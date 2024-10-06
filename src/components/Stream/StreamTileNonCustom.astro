@@ -383,11 +383,11 @@ const { url } = Astro.props;
 
                 this.pcState = WebSocket.OPEN;
 
-                this.wsState = WebSocket.CLOSED;
-                if (this.ws) {
-                    this.ws.close();
-                    this.ws = null;
-                }
+                // this.wsState = WebSocket.CLOSED;
+                // if (this.ws) {
+                //     this.ws.close();
+                //     this.ws = null;
+                // }
             }
 
             video2.srcObject = null;
