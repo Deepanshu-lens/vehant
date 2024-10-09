@@ -67,7 +67,6 @@ const { url } = Astro.props;
                 case "LOADING":
                     this.loadingState.style.display = "block";
                     if (this.video) this.video.style.display = "none";
-
                     break;
                 case "LOADED":
                     this.loadingState.style.display = "none";
@@ -177,10 +176,12 @@ const { url } = Astro.props;
             this.ws.addEventListener("open", () => this.onopen());
             this.ws.addEventListener("close", () => this.onclose());
 
+            console.log("WebSocket Connected");
             return true;
         }
 
         onopen() {
+            console.log("WebSocket Opened");
             this.wsState = WebSocket.OPEN;
 
             this.ws &&
@@ -212,6 +213,7 @@ const { url } = Astro.props;
 
         // @ts-expect-error
         override onclose() {
+            console.log("WebSocket Closed");
             if (this.wsState === WebSocket.CLOSED) return false;
 
             this.wsState = WebSocket.CONNECTING;
@@ -256,21 +258,35 @@ const { url } = Astro.props;
 
         onwebrtc() {
             const pc = new RTCPeerConnection(this.pcConfig);
-
+            console.log("WebSocket RTCPeerConnection Created");
             pc.addEventListener("icecandidate", (ev) => {
-                if (ev.candidate && ev.candidate.protocol === "udp") return;
+                console.log("ICE Candidate", ev.candidate);
+                // if (ev.candidate && ev.candidate.protocol === "udp") {
+                //     console.error(
+                //         "WRONG CANIDADATE OR PROTOCOL",
+                //         ev.candidate,
+                //         ev.candidate.protocol,
+                //         ev.candidate.protocol === "udp",
+                //     );
+                //     return;
+                // }
+
+                // console.log(" I AM HERE", ev.candidate, ev.candidate?.toJSON());
 
                 const candidate = ev.candidate
                     ? ev.candidate.toJSON().candidate
                     : "";
+
                 this.send({ type: "webrtc/candidate", value: candidate });
             });
 
             pc.addEventListener("connectionstatechange", () => {
                 if (pc.connectionState === "connected") {
+                    console.log("WebRTC Connected");
                     const tracks = pc
                         .getReceivers()
                         .map((receiver) => receiver.track);
+
                     /** @type {HTMLVideoElement} */
                     const video2 = document.createElement("video");
                     video2.addEventListener(
@@ -285,6 +301,7 @@ const { url } = Astro.props;
                     pc.connectionState === "failed" ||
                     pc.connectionState === "disconnected"
                 ) {
+                    console.log("WebRTC Closed");
                     pc.close(); // stop next events
 
                     this.pcState = WebSocket.CLOSED;
@@ -299,20 +316,21 @@ const { url } = Astro.props;
             this.onmessage["webrtc"] = (msg) => {
                 switch (msg.type) {
                     case "webrtc/candidate":
-                        const candidateText = `candidate:${msg.value.CandidateID} 1 udp ${msg.value.Priority} ${msg.value.IPAddress} ${msg.value.Port} typ srflx raddr 0.0.0.0 rport ${msg.value.Port}`;
+                        // const candidateText = `candidate:${msg.value.CandidateID} 1 udp ${msg.value.Priority} ${msg.value.IPAddress} ${msg.value.Port} typ srflx raddr 0.0.0.0 rport ${msg.value.Port}`;
 
                         pc.addIceCandidate({
-                            candidate: candidateText,
+                            // candidate: candidateText,
+                            candidate: msg.value,
                             sdpMid: "0",
                         }).catch((er) => {
                             console.warn(er);
                         });
                         break;
                     case "webrtc/answer":
-                        const sdpTemplate = `v=0\r\no=- ${msg.value.session_ids[0][0]} ${msg.value.session_ids[0][1]} IN IP4 0.0.0.0\r\ns=-\r\nt=0 0\r\na=msid-semantic:WMS*\r\na=fingerprint:sha-256 ${msg.value.fingerprint[0][0]}\r\na=extmap-allow-mixed\r\na=group:BUNDLE 0\r\nm=video 9 UDP/TLS/RTP/SAVPF 102 106 112\r\nc=IN IP4 0.0.0.0\r\na=setup:active\r\na=mid:0\r\na=ice-ufrag:${msg.value.ice_ufrag[0]}\r\na=ice-pwd:${msg.value.ice_pwd[0]}\r\na=rtcp-mux\r\na=rtcp-rsize\r\na=rtpmap:102 H264/90000\r\na=fmtp:102 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f\r\na=rtcp-fb:102 goog-remb \r\na=rtcp-fb:102 transport-cc \r\na=rtcp-fb:102 ccm fir\r\na=rtcp-fb:102 nack \r\na=rtcp-fb:102 nack pli\r\na=rtpmap:106 H264/90000\r\na=fmtp:106 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f\r\na=rtcp-fb:106 goog-remb \r\na=rtcp-fb:106 transport-cc \r\na=rtcp-fb:106 ccm fir\r\na=rtcp-fb:106 nack \r\na=rtcp-fb:106 nack pli\r\na=rtpmap:112 H264/90000\r\na=fmtp:112 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=64001f\r\na=rtcp-fb:112 goog-remb \r\na=rtcp-fb:112 transport-cc \r\na=rtcp-fb:112 ccm fir\r\na=rtcp-fb:112 nack \r\na=rtcp-fb:112 nack pli\r\na=extmap:4 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01\r\na=ssrc:${msg.value.ssrc[0]} cname:go2rtc\r\na=ssrc:${msg.value.ssrc[0]} msid:go2rtc go2rtc-video\r\na=ssrc:${msg.value.ssrc[0]} mslabel:go2rtc\r\na=ssrc:${msg.value.ssrc[0]} label:go2rtc-video\r\na=msid:go2rtc go2rtc-video\r\na=sendonly\r\n`;
+                        // const sdpTemplate = `v=0\r\no=- ${msg.value.session_ids[0][0]} ${msg.value.session_ids[0][1]} IN IP4 0.0.0.0\r\ns=-\r\nt=0 0\r\na=msid-semantic:WMS*\r\na=fingerprint:sha-256 ${msg.value.fingerprint[0][0]}\r\na=extmap-allow-mixed\r\na=group:BUNDLE 0\r\nm=video 9 UDP/TLS/RTP/SAVPF 102 106 112\r\nc=IN IP4 0.0.0.0\r\na=setup:active\r\na=mid:0\r\na=ice-ufrag:${msg.value.ice_ufrag[0]}\r\na=ice-pwd:${msg.value.ice_pwd[0]}\r\na=rtcp-mux\r\na=rtcp-rsize\r\na=rtpmap:102 H264/90000\r\na=fmtp:102 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f\r\na=rtcp-fb:102 goog-remb \r\na=rtcp-fb:102 transport-cc \r\na=rtcp-fb:102 ccm fir\r\na=rtcp-fb:102 nack \r\na=rtcp-fb:102 nack pli\r\na=rtpmap:106 H264/90000\r\na=fmtp:106 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f\r\na=rtcp-fb:106 goog-remb \r\na=rtcp-fb:106 transport-cc \r\na=rtcp-fb:106 ccm fir\r\na=rtcp-fb:106 nack \r\na=rtcp-fb:106 nack pli\r\na=rtpmap:112 H264/90000\r\na=fmtp:112 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=64001f\r\na=rtcp-fb:112 goog-remb \r\na=rtcp-fb:112 transport-cc \r\na=rtcp-fb:112 ccm fir\r\na=rtcp-fb:112 nack \r\na=rtcp-fb:112 nack pli\r\na=extmap:4 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01\r\na=ssrc:${msg.value.ssrc[0]} cname:go2rtc\r\na=ssrc:${msg.value.ssrc[0]} msid:go2rtc go2rtc-video\r\na=ssrc:${msg.value.ssrc[0]} mslabel:go2rtc\r\na=ssrc:${msg.value.ssrc[0]} label:go2rtc-video\r\na=msid:go2rtc go2rtc-video\r\na=sendonly\r\n`;
                         pc.setRemoteDescription({
                             type: "answer",
-                            sdp: sdpTemplate,
+                            sdp: msg.value,
                         }).catch((er) => {
                             console.warn(er);
                         });
@@ -326,25 +344,25 @@ const { url } = Astro.props;
             };
 
             this.createOffer(pc).then((offer) => {
-                var results: { [key: string]: string[] } = {};
-                const regexPatterns = {
-                    session_ids: /o=- (\d+) (\d+) IN IP4/,
-                    fingerprint: /fingerprint:sha-256 ([A-F0-9:]+)/,
-                    ice_ufrag: /ice-ufrag:(\S+)/,
-                    ice_pwd: /ice-pwd:(\S+)/,
-                    ssrc: /ssrc:(\d+)/,
-                };
-                for (const key in regexPatterns) {
-                    const regex =
-                        regexPatterns[key as keyof typeof regexPatterns];
-                    const match = offer.sdp.match(regex);
-                    if (match) {
-                        results[key] = match.slice(1); // Capture groups
-                    }
-                }
+                // var results: { [key: string]: string[] } = {};
+                // const regexPatterns = {
+                //     session_ids: /o=- (\d+) (\d+) IN IP4/,
+                //     fingerprint: /fingerprint:sha-256 ([A-F0-9:]+)/,
+                //     ice_ufrag: /ice-ufrag:(\S+)/,
+                //     ice_pwd: /ice-pwd:(\S+)/,
+                //     ssrc: /ssrc:(\d+)/,
+                // };
+                // for (const key in regexPatterns) {
+                //     const regex =
+                //         regexPatterns[key as keyof typeof regexPatterns];
+                //     const match = offer.sdp.match(regex);
+                //     if (match) {
+                //         results[key] = match.slice(1); // Capture groups
+                //     }
+                // }
                 this.send({
                     type: "webrtc/offer",
-                    offer: results,
+                    offer: offer.sdp,
                 });
             });
 
@@ -383,11 +401,11 @@ const { url } = Astro.props;
 
                 this.pcState = WebSocket.OPEN;
 
-                // this.wsState = WebSocket.CLOSED;
-                // if (this.ws) {
-                //     this.ws.close();
-                //     this.ws = null;
-                // }
+                this.wsState = WebSocket.CLOSED;
+                if (this.ws) {
+                    this.ws.close();
+                    this.ws = null;
+                }
             }
 
             video2.srcObject = null;

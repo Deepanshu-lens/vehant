@@ -1,4 +1,4 @@
-// @ts-check
+// @ts-ignore
 import { defineConfig } from 'astro/config';
 
 import tailwind from '@astrojs/tailwind';
@@ -11,18 +11,14 @@ import playformCompress from '@playform/compress';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [
-    tailwind(),
-    svelte(),
-    playformCompress({
-      JavaScript: {
-        terser:{
-          mangle: true,
-          module: true,
-        }
+  integrations: [tailwind(), svelte(), playformCompress({
+    JavaScript: {
+      terser: {
+        mangle: true,
+        module: true,
       }
-    }),
-  ],
+    }
+  })],
  
   // output: 'hybrid',
 

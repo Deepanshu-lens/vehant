@@ -9,30 +9,35 @@ const navLinks = [
 ];
 ---
 
-<div class="mx-auto w-full flex justify-between items-center h-full">
-    <div class="flex items-center space-x-3">
-        <!-- <img src="/images/green.svg" alt="LENS View Logo" class="h-8"  /> -->
-    </div>
+<header
+    class="h-10 md:h-12 backdrop-blur-lg bg-white/80 shadow-md px-4 md:px-4 lg:px-16 text-gray-600"
+>
+    <div class="mx-auto w-full flex justify-between items-center h-full">
+        <div class="flex items-center space-x-0 justify-around">
+            <img src="/images/lens2_1.svg" alt="LENS View Logo" class="h-10" />
+            <img src="/images/green.svg" alt="LENS View Logo" class="h-8" />
+        </div>
 
-    <nav class="hidden md:flex space-x-4">
-        {
-            navLinks.map((link) => (
-                <a
-                    href={link.href}
-                    class={`text-sm transition-all px-3 py-2 rounded-md
+        <nav class="hidden md:flex space-x-4">
+            {
+                navLinks.map((link) => (
+                    <a
+                        href={link.href}
+                        class={`text-sm transition-all px-3 py-2 rounded-md 
                     ${
                         Astro.url.pathname === link.href
-                            ? "font-medium bg-gray-200 text-black"
-                            : "font-normal text-gray-600 hover:bg-gray-100 hover:text-black"
+                            ? "font-bold text-[#015A62]"
+                            : "font-medium text-[#4F4F4F] hover:text-[#015A62]"
                     }`}
-                >
-                    {link.name}
-                </a>
-            ))
-        }
-    </nav>
+                    >
+                        {link.name}
+                    </a>
+                ))
+            }
+        </nav>
 
-    <div class="hidden md:flex items-center space-x-2">
-        <span class="text-sm font-medium">Debayan Deb</span>
+        <div class="hidden md:flex items-center space-x-2">
+            <span class="text-sm font-medium">Debayan Deb</span>
+        </div>
     </div>
-</div>
+</header>

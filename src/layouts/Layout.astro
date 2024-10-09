@@ -26,29 +26,19 @@ const { title } = Astro.props;
 		<!-- <ViewTransitions /> -->
 	</head>
 	<body class="antialiased">
-		<header
-			class="h-10 md:h-16 backdrop-blur-lg bg-white/80 shadow-md px-4 md:px-4 lg:px-16 text-gray-600"
-		>
-			<!-- <Topbar client:only="svelte" transition:persist /> -->
-			<Topbar />
-		</header>
+		<!-- <Topbar client:only="svelte" transition:persist /> -->
+		<Topbar />
 
 		<slot />
+		<!-- <script>
+			document.addEventListener("contextmenu", function (event) {
+				event.preventDefault();
+			});
+		</script> -->
 	</body>
 </html>
-
+<!-- 
 <style is:global>
-	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
-	}
 	body {
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
@@ -61,4 +51,4 @@ const { title } = Astro.props;
 		position: relative;
 		overflow-x: hidden;
 	}
-</style>
+</style> -->

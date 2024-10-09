@@ -6,6 +6,7 @@ import StreamTileNonCustom from "../components/Stream/StreamTileNonCustom.astro"
 import StreamTileHTTP from "../components/Stream/StreamTileHTTP.astro";
 import SimpleTile from "../components/Stream/SimpleTile.svelte";
 import Test from "../components/Stream/Test.svelte";
+
 const urls = [
     // "ws://18.218.162.33:8082/api/ws?src=hiolz776f44s7me&nodeID=1&cn=nvrCam%2034",
     // "ws://18.221.34.208:8081/api/ws?src=h2c3j3kn1erul8y",
@@ -25,6 +26,7 @@ const urls = [
         <div class="grid grid-cols-2 gap-4 p-4">
             <!-- <StreamTileSvelte url={urls[0]} client:only="svelte" /> -->
             <StreamTileNonCustom url={urls[0]} />
+
             <!-- <div class="flex flex-col">
                 Customized WebRTC <StreamTile url={urls[1]} />
             </div> -->
