@@ -3,7 +3,7 @@
 import Topbar from "../components/Topbar/Topbar.astro";
 
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
@@ -11,44 +11,29 @@ const { title } = Astro.props;
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<!-- <link
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- <link
 			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 			rel="stylesheet"
 			rel="preload"
 			as="style"
 		/> -->
-		<title>{title}</title>
-		<!-- <ViewTransitions /> -->
-	</head>
-	<body class="antialiased">
-		<!-- <Topbar client:only="svelte" transition:persist /> -->
-		<Topbar />
+    <title>{title}</title>
+    <!-- <ViewTransitions /> -->
+  </head>
+  <body class="antialiased">
+    <!-- <Topbar client:only="svelte" transition:persist /> -->
+    <Topbar />
 
-		<slot />
-		<!-- <script>
+    <slot />
+    <!-- <script>
 			document.addEventListener("contextmenu", function (event) {
 				event.preventDefault();
 			});
 		</script> -->
-	</body>
+  </body>
 </html>
-<!-- 
-<style is:global>
-	body {
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		text-rendering: optimizeLegibility;
-		font-size: 1rem;
-		line-height: 1.5;
-		margin: 0;
-		padding: 0;
-		min-height: 100%;
-		position: relative;
-		overflow-x: hidden;
-	}
-</style> -->

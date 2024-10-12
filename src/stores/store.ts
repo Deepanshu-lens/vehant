@@ -1,7 +1,13 @@
-import { writable } from 'svelte/store';
+import { writable } from "svelte/store";
 
-export const videoStreamStore = writable<WebSocket | null>(null);
-export const multiVideoStreamStore = writable<WebSocket[] | null>(null);
+interface Camera {
+  name: string;
+  url: string;
+  id: string;
+}
+
+export const cameras = writable<Camera[]>([]);
+export const selectedLayout = writable<number>(0);
 
 // // Function to initialize or reuse WebSocket connection
 // export function initWebSocket(url: string): WebSocket {
@@ -24,4 +30,3 @@ export const multiVideoStreamStore = writable<WebSocket[] | null>(null);
 
 //     return ws;
 // }
-
