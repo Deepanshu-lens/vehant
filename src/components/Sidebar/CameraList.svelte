@@ -1,11 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { cameras } from "@/stores";
+  import { cameras, nodes } from "@/stores";
   import Sortable from "sortablejs";
   import { Button } from "@/components/ui/button";
   import GhostIconButton from "@/components/ui/custom/GhostIconButton.svelte";
   import AddCameraModal from "@/components/ui/modal/AddCameraModal.svelte";
   import Icon from "@iconify/svelte";
+  import * as Select from "@/components/ui/select/index.js";
   import { cn } from "@/lib/utils";
 
   export let smallList = false;
@@ -33,6 +34,22 @@
       <div
         class={`flex ${smallList && "flex-col space-y-2"} justify-between items-center`}
       >
+        <!-- <span>Node:</span> -->
+        <Select.Root>
+          <Select.Trigger class="w-[180px]">
+            <span class="text-muted-foreground">Node:</span>
+            <Select.Value placeholder="Cameras" class="text-white font-bold" />
+          </Select.Trigger>
+          <Select.Content>
+            {#each $nodes as node}
+              <Select.Item value={node.name} label={node.name}
+                >{node.name}</Select.Item
+              >
+            {/each}
+          </Select.Content>
+          <Select.Input name="favoriteFruit" />
+        </Select.Root>
+
         <h2 class="text-base font-semibold">Cameras</h2>
         <div
           class={cn(
@@ -104,7 +121,7 @@
                 ? camera.name?.substring(0, 10) + "..."
                 : camera.name}
             </h3>
-            <p class={`text-xs w-full ${smallList ? "hidden" : "text-clip "}`}>
+            <p class={`text-xs w-full ${smallList ? "hidden" : "truncate"}`}>
               {camera.url?.split("@")?.[1]?.split("/")?.[0]?.split(":")?.[0]}
             </p>
           </div>

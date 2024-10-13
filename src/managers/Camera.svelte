@@ -48,18 +48,22 @@
   let smallList = false;
 </script>
 
-<Resizable.PaneGroup direction="horizontal" autoSaveId="LENSViewPaneSize">
+<Resizable.PaneGroup
+  direction="horizontal"
+  autoSaveId="LENSViewPaneSize"
+  style="height: calc(100vh - 3rem);"
+>
   <Resizable.Pane default={70}><StreamLayout /></Resizable.Pane>
   <Resizable.Handle withHandle />
   <Resizable.Pane
     maxSize={22}
     bind:pane={paneOne}
     collapsible={true}
-    collapsedSize={4.22}
+    collapsedSize={4}
     minSize={0}
     onResize={(e) => {
       console.log(e);
-      if (e < 16.5) {
+      if (e < 17.5) {
         smallList = true;
       } else {
         smallList = false;

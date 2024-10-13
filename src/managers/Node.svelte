@@ -1,6 +1,6 @@
 <script lang="ts">
   import pb from "@/lib/sharedPB";
-  import { nodes, cameras } from "@/stores/store";
+  import { nodes } from "@/stores";
   import type { Node } from "@/types";
 
   (async () => {

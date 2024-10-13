@@ -4,29 +4,19 @@
   import StreamTile from "./StreamTile.svelte";
   import { cameras, selectedLayout } from "@/stores";
 
-  import ChevronLeft from "svelte-radix/ChevronLeft.svelte";
-  import ChevronRight from "svelte-radix/ChevronRight.svelte";
-  import * as Pagination from "@/components/ui/pagination/index.js";
-
   // let currentCameras = [];
 
-  // export let cameras = [];
-  export let layout = 0;
-
-  let currentPage = 0;
-  let pageSize = 9;
+  export let currentCameras = [];
 
   // $: currentCameras =
   //   false && $cameras.length > 0 && layout > 0 && layout <= 6
   //     ? $cameras.slice(0, layout * layout)
   //     : $cameras;
 
-  $: currentCameras = $cameras.slice(
-    currentPage * pageSize,
-    (currentPage + 1) * pageSize
-  );
+  // $: currentCameras = [...$cameras, ...Array(6).fill("")];
+  // $: currentCameras = $cameras.splice(0, 11);
 
-  $: console.log(cameras);
+  export let layout = 0;
 
   let container;
   let gridItems = [];
@@ -98,6 +88,34 @@
       (containerWidth - (lastRowColumns + 1) * vgap) / lastRowColumns;
     const lastRowHeight = lastRowWidth / aspectRatio;
 
+    $: console.log(
+      "NumCams: ",
+      currentCameras.length,
+      "\nContainer Width: ",
+      containerWidth,
+      "\nContainer Height: ",
+      containerHeight,
+      "\nTotal Height: ",
+      totalHeight,
+      "\nItem Width: ",
+      itemWidth,
+      "\nItemHeight: ",
+      itemHeight,
+      "\nRows: ",
+      rows,
+      "\nColumns: ",
+      columns,
+      "\nlastRowWidth: ",
+      lastRowWidth,
+      "\nlastRowColumns: ",
+      lastRowColumns,
+      "\nlastRowHeight: ",
+      lastRowHeight,
+      "\nleftoverWidth: ",
+      containerWidth -
+        (columns * itemWidth + gap * (columns - 1)) / (columns - 1)
+    );
+
     gridItems.forEach((item, index) => {
       let width, height, top, left;
       const row = Math.floor(index / columns);
@@ -131,22 +149,6 @@
     }
   }
 
-  function nextPage() {
-    if ((currentPage + 1) * pageSize < $cameras.length) {
-      currentPage++;
-    }
-  }
-
-  function goToPage(page: number) {
-    currentPage = page - 1;
-  }
-
-  function prevPage() {
-    if (currentPage > 0) {
-      currentPage--;
-    }
-  }
-
   onMount(() => {
     updateGridItems();
     window.addEventListener("resize", updateLayout);
@@ -175,48 +177,6 @@
       </div>
     {/each}
   </div>
-  <Pagination.Root
-    count={$cameras.length}
-    perPage={pageSize}
-    siblingCount={1}
-    let:pages
-    let:currentPage
-  >
-    <Pagination.Content class="mt-2">
-      <Pagination.Item>
-        <Pagination.PrevButton on:click={prevPage} disabled={currentPage === 1}>
-          <ChevronLeft class="h-4 w-4" />
-          <span class="hidden sm:block">Previous</span>
-        </Pagination.PrevButton>
-      </Pagination.Item>
-      {#each pages as page (page.key)}
-        {#if page.type === "ellipsis"}
-          <Pagination.Item>
-            <Pagination.Ellipsis />
-          </Pagination.Item>
-        {:else}
-          <Pagination.Item>
-            <Pagination.Link
-              {page}
-              isActive={currentPage === page.value}
-              on:click={goToPage(page.value)}
-            >
-              {page.value}
-            </Pagination.Link>
-          </Pagination.Item>
-        {/if}
-      {/each}
-      <Pagination.Item>
-        <Pagination.NextButton
-          on:click={nextPage}
-          disabled={currentPage * pageSize >= $cameras.length}
-        >
-          <span class="hidden sm:block">Next</span>
-          <ChevronRight class="h-4 w-4" />
-        </Pagination.NextButton>
-      </Pagination.Item>
-    </Pagination.Content>
-  </Pagination.Root>
 {/if}
 
 <style>

@@ -59,7 +59,7 @@
        * tab or minimise browser windows.
        * @type {boolean}
        */
-      this.visibilityCheck = true;
+      this.visibilityCheck = false;
 
       /**
        * [config] WebRTC configuration
@@ -194,6 +194,8 @@
       if (!this.video) return;
       if (!this.loadingState) return;
 
+      return;
+
       console.log("Change State to ", state);
 
       switch (state) {
@@ -280,7 +282,7 @@
 
       this.loadingState = document.createElement("div");
       this.loadingState.className =
-        "absolute bg-gray-300 animate-pulse w-full h-full rounded-lg";
+        "absolute bg-gray-300 animate-pulse w-full h-full rounded-lg hidden";
       this.loadingState.style.width = "100%";
       this.loadingState.style.height = "100%";
 
