@@ -147,7 +147,10 @@
       if (name === "data-url" && oldValue !== newValue) {
         console.log("data-url changed:", oldValue, newValue);
         this.wsURL = newValue; // Update wsURL with the new value
-        this.ondisconnect(); // Disconnect the previous connection
+        if (this.video) {
+          console.log("value ", value, this.video);
+          this.ondisconnect();
+        }
         this.onconnect(); // Reconnect with the new URL
       }
     }
