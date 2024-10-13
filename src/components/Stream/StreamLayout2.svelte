@@ -1,14 +1,15 @@
 <script lang="ts">
   import { onMount, afterUpdate } from "svelte";
+  import AddNode from "@/components/Nodes/AddNode.svelte";
   import StreamTile from "./StreamTile.svelte";
+  import { cameras, selectedLayout } from "@/stores";
 
-  export let cameras: Camera[] = [];
-  let currentCameras = cameras;
+  let currentCameras = [];
 
   $: currentCameras =
-    false && cameras.length > 0 && layout > 0 && layout <= 6
-      ? cameras.slice(0, layout * layout)
-      : cameras;
+    false && $cameras.length > 0 && layout > 0 && layout <= 6
+      ? $cameras.slice(0, layout * layout)
+      : $cameras;
 
   $: console.log("current cameras: ", currentCameras);
 
@@ -43,8 +44,10 @@
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
 
+    console.log(containerWidth);
+
     const aspectRatio = 16 / 9;
-    const gap = 8; // Gap between items
+    const gap = 1; // Gap between items
 
     let itemWidth = (containerWidth - (columns + 1) * gap) / columns;
     let itemHeight = itemWidth / aspectRatio;
@@ -88,8 +91,10 @@
   }
 
   function updateGridItems() {
-    gridItems = Array.from(container.querySelectorAll(".grid-item"));
-    updateLayout();
+    if (container) {
+      gridItems = Array.from(container.querySelectorAll(".grid-item"));
+      updateLayout();
+    }
   }
 
   onMount(() => {
@@ -109,22 +114,24 @@
   }
 </script>
 
-<div class="layout-container" bind:this={container}>
-  {#each currentCameras as stream, i}
-    <div class="grid-item rounded-lg">
-      <StreamTile
-        url={`ws://localhost:8080/api/ws?src=${stream.id}_FULL`}
-        classes=""
-      />
-    </div>
-  {/each}
-</div>
+{#if currentCameras.length > 0}
+  <div class="layout-container" bind:this={container}>
+    {#each currentCameras as stream, i}
+      <div class="grid-item rounded-lg">
+        <StreamTile
+          url={`ws://localhost:8080/api/ws?src=${stream.id}_FULL`}
+          classes=""
+        />
+      </div>
+    {/each}
+  </div>
+{/if}
 
 <style>
   .layout-container {
     position: relative;
     width: 75vw;
-    height: calc(100vh - 5rem);
+    height: calc(100vh - 3rem);
     overflow: hidden;
   }
 

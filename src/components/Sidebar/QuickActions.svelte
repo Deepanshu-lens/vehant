@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import { selectedLayout } from "@/stores/store";
+  import { selectedLayout } from "@/stores";
   import { cn } from "@/lib/utils";
   import * as Popover from "@/components/ui/popover";
   const maxStreamsPerPage = 36;
@@ -29,7 +29,8 @@
 </script>
 
 <div
-  class="flex flex-col space-y-8 items-center justify-center px-2 h-full my-auto border-l"
+  class="flex flex-col space-y-8 items-center justify-center px-2 h-screen border-l"
+  style="height:calc(100vh - 3rem);"
 >
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button

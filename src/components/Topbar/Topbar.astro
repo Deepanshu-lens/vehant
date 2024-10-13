@@ -1,4 +1,6 @@
 ---
+import UserProfile from "@/components/UserProfile/UserProfile.svelte";
+import Logo from "../ui/logo/Logo.astro";
 const navLinks = [
   { name: "Live", href: "/" },
   { name: "Playback", href: "/playback" },
@@ -9,15 +11,10 @@ const navLinks = [
 ];
 ---
 
-<header
-  class="h-10 md:h-16 bg-white px-4 md:px-4 lg:px-20 text-gray-600 border-b"
->
+<header class="h-10 md:h-12 lg:h-14 px-4 md:px-4 lg:px-20 border-b">
   <div class="mx-auto w-full flex justify-between items-center h-full">
-    <div class="flex items-center space-x-1 justify-around">
-      <img src="./images/Lens_2.svg" alt="LENS View Logo" class="h-8" />
-      <img src="./images/green.svg" alt="LENS View Logo" class="h-8" />
-    </div>
-    <nav class="hidden md:flex space-x-4">
+    <Logo />
+    <nav class="hidden md:flex space-x-4 md:space-x-6 lg:space-x-10">
       {
         navLinks.map((link) => (
           <a
@@ -25,8 +22,8 @@ const navLinks = [
             class={`text-base transition-all px-3 py-2 rounded-md 
                     ${
                       Astro.url.pathname === link.href
-                        ? "font-bold text-[#015A62]"
-                        : "font-medium text-[#4F4F4F] hover:text-[#015A62]"
+                        ? "font-black text-[#015A62]"
+                        : "font-medium  hover:text-[#015A62]"
                     }`}
           >
             {link.name}
@@ -35,8 +32,6 @@ const navLinks = [
       }
     </nav>
 
-    <div class="hidden md:flex items-center space-x-2">
-      <span class="text-sm font-medium">Debayan Deb</span>
-    </div>
+    <UserProfile client:only="svelte" />
   </div>
 </header>

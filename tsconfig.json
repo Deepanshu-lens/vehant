@@ -4,6 +4,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "baseUrl": ".",
+    "types": ["svelte"],
     "paths": {
       "@/*": ["./src/*"]
     }

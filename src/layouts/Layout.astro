@@ -1,15 +1,42 @@
 ---
+import "@/styles/globals.css";
 // import { ViewTransitions } from "astro:transitions";
 import Topbar from "../components/Topbar/Topbar.astro";
+import { ModeWatcher } from "mode-watcher";
 
 interface Props {
   title: string;
+  topbar: boolean;
 }
 
-const { title } = Astro.props;
+const { title, topbar = false } = Astro.props;
 ---
 
-<!doctype html>
+<script is:inline>
+  const isBrowser = typeof localStorage !== "undefined";
+  const getThemePreference = () => {
+    if (isBrowser && localStorage.getItem("theme")) {
+      return localStorage.getItem("theme");
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  };
+  const isDark = getThemePreference() === "dark";
+  document.documentElement.classList[isDark ? "add" : "remove"]("dark");
+
+  if (isBrowser) {
+    const observer = new MutationObserver(() => {
+      const isDark = document.documentElement.classList.contains("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+  }
+</script>
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -26,8 +53,9 @@ const { title } = Astro.props;
     <!-- <ViewTransitions /> -->
   </head>
   <body class="antialiased">
+    <ModeWatcher client:load />
     <!-- <Topbar client:only="svelte" transition:persist /> -->
-    <Topbar />
+    {topbar && <Topbar />}
 
     <slot />
     <!-- <script>

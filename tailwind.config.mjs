@@ -56,6 +56,16 @@ const config = {
       },
       fontFamily: {
         sans: [...fontFamily.sans],
+        lato: ["Lato", "sans-serif"],
+      },
+      fontSize: {
+        // xs: "0.625rem",
+        // sm: "0.75rem",
+        // base: "0.8125rem", // 15px base font size (adjust as needed)
+      },
+      backgroundImage: {
+        "login-background": "url('/images/loginBG.png')",
+        "login-dark-background": "url('/images/loginBGDark.png')",
       },
     },
   },
