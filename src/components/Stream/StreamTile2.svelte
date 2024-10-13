@@ -1,22 +1,14 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
-  import { get } from "svelte/store";
+  import { onMount } from "svelte";
+
   export let url: string;
-  export let classes: string;
 
-  let isVideoLoading = true;
-
-  let videoElement: HTMLVideoElement | null = null;
-  let webSocketInstance: WebSocket | null = null;
-
-  $: console.log("refereshed", url);
-
-  class VideoRTC extends HTMLElement {
+  export class VideoRTC extends HTMLElement {
     constructor() {
       super();
 
       this.DISCONNECT_TIMEOUT = 5000;
-      this.RECONNECT_TIMEOUT = 50000;
+      this.RECONNECT_TIMEOUT = 5;
 
       this.CODECS = [
         "avc1.640029", // H.264 high 4.1 (Chromecast 1st and 2nd Gen)
@@ -45,7 +37,7 @@
        * [config] Run stream when not displayed on the screen. Default `false`.
        * @type {boolean}
        */
-      this.background = false;
+      this.background = true;
 
       /**
        * [config] Run stream only when player in the viewport. Stop when user scroll out player.
@@ -67,6 +59,7 @@
        * @type {RTCConfiguration}
        */
       this.pcConfig = {
+        bundlePolicy: "max-bundle",
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
         sdpSemantics: "unified-plan", // important for Chromecast 1
       };
@@ -96,8 +89,7 @@
       /**
        * @type {string|URL}
        */
-      this.wsURL = "";
-      console.log("THIS WSURL: ", this.wsURL);
+      this.wsURL = this.getAttribute("data-url");
 
       /**
        * @type {RTCPeerConnection}
@@ -139,19 +131,6 @@
       this.onmessage = null;
     }
 
-    static get observedAttributes() {
-      return ["data-url"]; // Watch for changes to the data-url attribute
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-      if (name === "data-url" && oldValue !== newValue) {
-        console.log("data-url changed:", oldValue, newValue);
-        this.wsURL = newValue; // Update wsURL with the new value
-        this.ondisconnect(); // Disconnect the previous connection
-        this.onconnect(); // Reconnect with the new URL
-      }
-    }
-
     /**
      * Set video source (WebSocket URL). Support relative path.
      * @param {string|URL} value
@@ -161,23 +140,12 @@
       if (value.startsWith("http")) {
         value = "ws" + value.substring(4);
       } else if (value.startsWith("/")) {
-        value = "ws" + window.location.origin.substring(4) + value;
+        value = "ws" + location.origin.substring(4) + value;
       }
 
-      if (this.video) {
-        console.log("value ", value, this.video);
-        this.ondisconnect();
-      }
       this.wsURL = value;
-      this.onconnect();
-    }
 
-    attributChangeCallback(name, oldValue, newValue) {
-      if (name === "data-url" && oldValue !== newValue) {
-        console.log("data-url changed to:", newValue);
-        // this.wsURL = newValue;  // Update wsURL with new value
-        // this.onconnect();  // Reconnect if needed
-      }
+      this.onconnect();
     }
 
     /**
@@ -211,41 +179,6 @@
       )
         .filter((codec) => isSupported(`video/mp4; codecs="${codec}"`))
         .join();
-    }
-
-    cleanUp() {
-      if (this.ws) {
-        this.ws.close();
-        this.ws = null;
-        console.log("WebSocket closed in disconnectedCallback.");
-      }
-    }
-
-    changeState(state: string) {
-      if (!this.video) return;
-      if (!this.loadingState) return;
-
-      return;
-
-      console.log("Change State to ", state);
-
-      switch (state) {
-        case "LOADING":
-          this.loadingState.style.display = "block";
-          if (this.video) this.video.style.display = "none";
-          break;
-        case "LOADED":
-          this.loadingState.style.display = "none";
-          if (this.video) this.video.style.display = "block";
-          break;
-        case "ERROR":
-          this.loadingState.style.display = "block";
-          this.loadingState.className = this.loadingState.className.replace(
-            "bg-gray-300",
-            "bg-red-300"
-          );
-          break;
-      }
     }
 
     /**
@@ -310,18 +243,20 @@
       this.video.style.width = "100%";
       this.video.style.height = "100%";
       this.video.className = "rounded-lg object-cover";
+      //   this.video.controls = true;
+      //   this.video.playsInline = true;
+      //   this.video.preload = "auto";
 
-      this.loadingState = document.createElement("div");
-      this.loadingState.className =
-        "absolute bg-gray-300 animate-pulse w-full h-full rounded-lg hidden";
-      this.loadingState.style.width = "100%";
-      this.loadingState.style.height = "100%";
-
-      this.appendChild(this.loadingState);
+      //   this.video.style.display = "block"; // fix bottom margin 4px
+      //   this.video.style.width = "100%";
+      //   this.video.style.height = "100%";
 
       this.appendChild(this.video);
 
-      this.changeState("LOADING");
+      this.video.addEventListener("error", (ev) => {
+        console.warn(ev);
+        if (this.ws) this.ws.close(); // run reconnect for broken MSE stream
+      });
 
       // all Safari lies about supported audio codecs
       const m = window.navigator.userAgent.match(/Version\/(\d+).+Safari/);
@@ -365,24 +300,14 @@
      * @return {boolean} true if the connection has started.
      */
     onconnect() {
-      console.log(
-        "onconnect",
-        !this.isConnected,
-        !this.wsURL,
-        this.ws,
-        this.pc
-      );
       if (!this.isConnected || !this.wsURL || this.ws || this.pc) return false;
 
       // CLOSED or CONNECTING => CONNECTING
       this.wsState = WebSocket.CONNECTING;
 
-      this.changeState("LOADING");
-
       this.connectTS = Date.now();
 
       this.ws = new WebSocket(this.wsURL);
-      webSocketInstance = this.ws;
       this.ws.binaryType = "arraybuffer";
       this.ws.addEventListener("open", () => this.onopen());
       this.ws.addEventListener("close", () => this.onclose());
@@ -416,15 +341,10 @@
     onopen() {
       // CONNECTING => OPEN
       this.wsState = WebSocket.OPEN;
-      console.log("Connecting", this.wsURL);
+
       this.ws.addEventListener("message", (ev) => {
         if (typeof ev.data === "string") {
           const msg = JSON.parse(ev.data);
-          if (msg.value && msg.value.includes("No connection could be made")) {
-            console.log("connection error", this.wsURL);
-            let camName = this.wsURL.split("&cn=")[1];
-            this.changeState("ERROR");
-          }
           for (const mode in this.onmessage) {
             this.onmessage[mode](msg);
           }
@@ -444,11 +364,33 @@
       ) {
         modes.push("mse");
         this.onmse();
+      } else if (
+        this.mode.indexOf("hls") >= 0 &&
+        this.video.canPlayType("application/vnd.apple.mpegurl")
+      ) {
+        modes.push("hls");
+        this.onhls();
+      } else if (this.mode.indexOf("mp4") >= 0) {
+        modes.push("mp4");
+        this.onmp4();
       }
 
       if (this.mode.indexOf("webrtc") >= 0 && "RTCPeerConnection" in window) {
         modes.push("webrtc");
         this.onwebrtc();
+      }
+
+      if (this.mode.indexOf("mjpeg") >= 0) {
+        if (modes.length) {
+          this.onmessage["mjpeg"] = (msg) => {
+            if (msg.type !== "error" || msg.value.indexOf(modes[0]) !== 0)
+              return;
+            this.onmjpeg();
+          };
+        } else {
+          modes.push("mjpeg");
+          this.onmjpeg();
+        }
       }
 
       return modes;
@@ -481,7 +423,7 @@
     onmse() {
       /** @type {MediaSource} */
       let ms;
-      console.log("here");
+
       if ("ManagedMediaSource" in window) {
         const MediaSource = window.ManagedMediaSource;
 
@@ -500,8 +442,7 @@
         this.video.disableRemotePlayback = true;
         this.video.srcObject = ms;
       } else {
-        ms = new MediaSource(this.codecs(MediaSource.isTypeSupported));
-        // console.log("milgya   ", URL.revokeObjectURL(this.video.src))
+        ms = new MediaSource();
         ms.addEventListener(
           "sourceopen",
           () => {
@@ -518,15 +459,6 @@
         this.video.srcObject = null;
       }
 
-      this.video.addEventListener(
-        "playing",
-        () => {
-          console.log("Video started playing in MSE mode");
-          this.changeState("LOADED");
-        },
-        { once: true }
-      );
-
       this.play();
 
       this.mseCodecs = "";
@@ -538,7 +470,6 @@
 
         const sb = ms.addSourceBuffer(msg.value);
         sb.mode = "segments"; // segments or sequence
-
         sb.addEventListener("updateend", () => {
           if (sb.updating) return;
 
@@ -598,7 +529,10 @@
 
       pc.addEventListener("connectionstatechange", () => {
         if (pc.connectionState === "connected") {
-          const tracks = pc.getReceivers().map((receiver) => receiver.track);
+          const tracks = pc
+            .getTransceivers()
+            .filter((tr) => tr.currentDirection === "recvonly") // skip inactive
+            .map((tr) => tr.receiver.track);
           /** @type {HTMLVideoElement} */
           const video2 = document.createElement("video");
           video2.addEventListener("loadeddata", () => this.onpcvideo(video2), {
@@ -641,7 +575,6 @@
             );
             break;
           case "error":
-            this.changeState("ERROR");
             if (msg.value.indexOf("webrtc/offer") < 0) return;
             pc.close();
         }
@@ -725,6 +658,33 @@
       video2.srcObject = null;
     }
 
+    onmjpeg() {
+      this.ondata = (data) => {
+        this.video.controls = false;
+        this.video.poster = "data:image/jpeg;base64," + VideoRTC.btoa(data);
+      };
+
+      this.send({ type: "mjpeg" });
+    }
+
+    onhls() {
+      this.onmessage["hls"] = (msg) => {
+        if (msg.type !== "hls") return;
+
+        const url =
+          "http" + this.wsURL.substring(2, this.wsURL.indexOf("/ws")) + "/hls/";
+        const playlist = msg.value.replace("hls/", url);
+        this.video.src =
+          "data:application/vnd.apple.mpegurl;base64," + btoa(playlist);
+        this.play();
+      };
+
+      this.send({
+        type: "hls",
+        value: this.codecs((type) => this.video.canPlayType(type)),
+      });
+    }
+
     onmp4() {
       /** @type {HTMLCanvasElement} **/
       const canvas = document.createElement("canvas");
@@ -773,22 +733,19 @@
       customElements.define("lens-view-stream-tile", VideoRTC);
     }
   });
-
-  onDestroy(() => {
-    // If WebSocket exists, close it when component is destroyed
-    if (webSocketInstance) {
-      webSocketInstance.close();
-      console.log("WebSocket closed on component destroy.");
-    }
-  });
-
-  // customElements.define("lens-view-stream-tile", VideoRTC);
 </script>
 
-<lens-view-stream-tile
-  bind:this={videoElement}
-  class="w-full h-full"
-  data-url={url}
+<!-- <video controls autoplay muted playsinline style="width: 100%; height: auto;" >
+  Your browser does not support the video tag.
+</video> -->
+
+<lens-view-stream-tile class="w-full h-full" data-url={url}
 ></lens-view-stream-tile>
 
-<!-- <div class={`bg-rose-200 ${classes}`} style="aspect-ratio: 16/9;"></div> -->
+<style>
+  video {
+    display: block;
+    background-color: black;
+    border-radius: 8px;
+  }
+</style>

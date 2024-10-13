@@ -36,9 +36,9 @@
       >
         <!-- <span>Node:</span> -->
         <Select.Root>
-          <Select.Trigger class="w-[180px]">
+          <Select.Trigger class="w-full">
             <span class="text-muted-foreground">Node:</span>
-            <Select.Value placeholder="Cameras" class="text-white font-bold" />
+            <Select.Value placeholder="Cameras" class="text-black font-bold" />
           </Select.Trigger>
           <Select.Content>
             {#each $nodes as node}
@@ -50,7 +50,7 @@
           <Select.Input name="favoriteFruit" />
         </Select.Root>
 
-        <h2 class="text-base font-semibold">Cameras</h2>
+        <!-- <h2 class="text-base font-semibold">Cameras</h2> -->
         <div
           class={cn(
             "flex items-center",

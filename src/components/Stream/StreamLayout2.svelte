@@ -167,12 +167,14 @@
 {#if currentCameras.length > 0}
   <div class="layout-container" bind:this={container}>
     {#each currentCameras as stream, i}
-      <div class="grid-item rounded-lg">
-        <StreamTile
-          url={`ws://localhost:8080/api/ws?src=${stream.id}_FULL`}
-          classes=""
-        />
-      </div>
+      {#key stream.id}
+        <div class="grid-item rounded-lg">
+          <StreamTile
+            url={`ws://localhost:8080/api/ws?src=${stream.id}_FULL`}
+            classes=""
+          />
+        </div>
+      {/key}
     {/each}
   </div>
   <Pagination.Root
