@@ -9,8 +9,6 @@
   let videoElement: HTMLVideoElement | null = null;
   let webSocketInstance: WebSocket | null = null;
 
-  $: console.log("refereshed", url);
-
   class VideoRTC extends HTMLElement {
     constructor() {
       super();
@@ -60,7 +58,7 @@
        * tab or minimise browser windows.
        * @type {boolean}
        */
-      this.visibilityCheck = false;
+      this.visibilityCheck = true;
 
       /**
        * [config] WebRTC configuration
@@ -97,7 +95,6 @@
        * @type {string|URL}
        */
       this.wsURL = "";
-      console.log("THIS WSURL: ", this.wsURL);
 
       /**
        * @type {RTCPeerConnection}
@@ -145,7 +142,6 @@
 
     attributeChangedCallback(name, oldValue, newValue) {
       if (name === "data-url" && oldValue !== newValue) {
-        console.log("data-url changed:", oldValue, newValue);
         this.wsURL = newValue; // Update wsURL with the new value
         if (this.video) {
           console.log("value ", value, this.video);
@@ -228,8 +224,6 @@
       if (!this.video) return;
       if (!this.loadingState) return;
 
-      return;
-
       console.log("Change State to ", state);
 
       switch (state) {
@@ -280,6 +274,7 @@
      * document's DOM.
      */
     disconnectedCallback() {
+      console.log("disconnectedCallback called");
       if (this.background || this.disconnectTID) return;
       if (
         this.wsState === WebSocket.CLOSED &&
@@ -309,14 +304,14 @@
       this.video.playsInline = true;
       this.video.preload = "auto";
 
-      this.video.style.display = "block"; // fix bottom margin 4px
+      this.video.style.display = "none"; // fix bottom margin 4px
       this.video.style.width = "100%";
       this.video.style.height = "100%";
       this.video.className = "rounded-lg object-cover";
 
       this.loadingState = document.createElement("div");
       this.loadingState.className =
-        "absolute bg-gray-300 animate-pulse w-full h-full rounded-lg hidden";
+        "absolute bg-primary/10 animate-pulse w-full h-full rounded-lg";
       this.loadingState.style.width = "100%";
       this.loadingState.style.height = "100%";
 
@@ -368,13 +363,13 @@
      * @return {boolean} true if the connection has started.
      */
     onconnect() {
-      console.log(
-        "onconnect",
-        !this.isConnected,
-        !this.wsURL,
-        this.ws,
-        this.pc
-      );
+      // console.log(
+      //   "onconnect",
+      //   !this.isConnected,
+      //   !this.wsURL,
+      //   this.ws,
+      //   this.pc
+      // );
       if (!this.isConnected || !this.wsURL || this.ws || this.pc) return false;
 
       // CLOSED or CONNECTING => CONNECTING
@@ -394,6 +389,7 @@
     }
 
     ondisconnect() {
+      console.log("DISCONNECT CALLED");
       this.wsState = WebSocket.CLOSED;
       if (this.ws) {
         this.ws.close();
@@ -419,7 +415,7 @@
     onopen() {
       // CONNECTING => OPEN
       this.wsState = WebSocket.OPEN;
-      console.log("Connecting", this.wsURL);
+      // console.log("Connecting", this.wsURL);
       this.ws.addEventListener("message", (ev) => {
         if (typeof ev.data === "string") {
           const msg = JSON.parse(ev.data);
@@ -484,7 +480,6 @@
     onmse() {
       /** @type {MediaSource} */
       let ms;
-      console.log("here");
       if ("ManagedMediaSource" in window) {
         const MediaSource = window.ManagedMediaSource;
 
@@ -557,10 +552,11 @@
                 sb.remove(start, end);
                 ms.setLiveSeekableRange(end, end + 15);
               }
-              // console.debug("VideoRTC.buffered", start, end);
+              // console.log("VideoRTC.buffered", start, end);
             }
           } catch (e) {
-            // console.debug(e);
+            console.error(e);
+            this.oninit();
           }
         });
 
@@ -568,16 +564,28 @@
         let bufLen = 0;
 
         this.ondata = (data) => {
+          if (this.paused) {
+            console.log("VIDEO PAUSED!!!");
+            return;
+          }
+          if (this.video.error) {
+            // console.error(
+            //   "Video element has an error, stopping append.",
+            //   this.video.error
+            // );
+            // return;
+          }
           if (sb.updating || bufLen > 0) {
             const b = new Uint8Array(data);
             buf.set(b, bufLen);
             bufLen += b.byteLength;
-            // console.debug("VideoRTC.buffer", b.byteLength, bufLen);
+            // console.log("VideoRTC.buffer", b.byteLength, bufLen);
           } else {
             try {
               sb.appendBuffer(data);
             } catch (e) {
-              // console.debug(e);
+              console.error(e);
+              // this.oninit();
             }
           }
         };

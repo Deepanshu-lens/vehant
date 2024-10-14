@@ -62,14 +62,12 @@
     collapsedSize={4}
     minSize={0}
     onResize={(e) => {
-      console.log(e);
       if (e < 17.5) {
         smallList = true;
       } else {
         smallList = false;
       }
       if (e < 14) {
-        console.log("Collpse!", e);
         paneOne.collapse();
       }
     }}
