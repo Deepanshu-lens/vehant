@@ -29,9 +29,7 @@
 
   onMount(() => {
     authenticate().then((token) => {
-      console.log(token);
       if (token) {
-        // pb.authStore.save(token, {});
         user.set(pb.authStore.model);
       } else {
         window.location.href = "/login";

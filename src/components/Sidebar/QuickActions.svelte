@@ -38,7 +38,7 @@
       on:click={() => {
         addUserLog(`user clicked on Search button, top panel`);
       }}
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
     >
       <Icon icon="material-symbols:search" class="h-[22px] w-[22px]" />
     </button>
@@ -52,7 +52,7 @@
     <!-- <button
       disabled={!features.includes("Grid Fullscreen") || cameraCount === 0} -->
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
       ><Icon
         icon="material-symbols:fullscreen"
         class="h-[22px] w-[22px]"
@@ -67,7 +67,7 @@
   <!--  -->
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
       ><Icon
         icon="material-symbols:speed-camera-outline-rounded"
         class="h-[22px] w-[22px]"
@@ -83,7 +83,7 @@
     <!-- <button
       disabled={!features.includes("Toggle Alerts")} -->
     <button
-      class={` disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
+      class={` disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
       ><Icon
         icon="material-symbols:notifications-active-outline-rounded"
         class="h-[22px] w-[22px]"
@@ -99,7 +99,7 @@
     <button
       disabled
       on:click={() => addUserLog("user clicked on Register button, top panel")}
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
     >
       <Icon
         icon="material-symbols:familiar-face-and-zone"
@@ -120,7 +120,7 @@
     <span class="group flex-col flex items-center justify-center gap-0.5">
       <button
         disabled
-        class={`disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+        class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
         ><Icon
           icon="material-symbols:screenshot-monitor-outline"
           class="h-[22px] w-[22px]"
@@ -137,7 +137,7 @@
     <!-- <button
       disabled={!features.includes("Change Layouts")} -->
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
+      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
       ><Icon
         icon="material-symbols:app-registration"
         class="h-[22px] w-[22px]"
@@ -152,7 +152,7 @@
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
       disabled
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
       ><Icon
         icon="material-symbols:fiber-manual-record-outline"
         class="h-[22px] w-[22px]"
@@ -166,7 +166,7 @@
   </span>
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
+      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
       ><Icon
         icon="material-symbols:imagesmode-outline"
         class="h-[22px] w-[22px]"
@@ -184,7 +184,7 @@
       <Popover.Trigger let:builder>
         <!-- <Button builders={[builder]} variant="outline">Open</Button> -->
         <button
-          class={`disabled:cursor-not-allowed text-black/[.4] h-[40px] w-[40px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+          class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
           ><Icon
             icon="material-symbols:grid-view-outline-rounded"
             class="h-[22px] w-[22px]"

@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { cameras, nodes } from "@/stores";
+  import { cameras, nodes, selectedNode } from "@/stores";
   import Sortable from "sortablejs";
   import { Button } from "@/components/ui/button";
   import GhostIconButton from "@/components/ui/custom/GhostIconButton.svelte";
   import AddCameraModal from "@/components/ui/modal/AddCameraModal.svelte";
+  import AddNodeModal from "@/components/ui/modal/AddNodeModal.svelte";
   import Icon from "@iconify/svelte";
   import * as Select from "@/components/ui/select/index.js";
   import { cn } from "@/lib/utils";
@@ -25,7 +26,15 @@
       });
     }
   });
-  $: console.log(smallList);
+  $: console.log($cameras);
+  let selectedValue = {
+    value: $selectedNode,
+    label: $nodes.find((n) => n.id === $selectedNode)?.name,
+  };
+  $: selectedValue = {
+    value: $selectedNode,
+    label: $nodes.find((n) => n.id === $selectedNode)?.name,
+  };
 </script>
 
 <!-- {#if currentCameras.length > 0} -->
@@ -35,29 +44,32 @@
       class={`flex ${smallList && "flex-col space-y-2"} justify-between items-center`}
     >
       <!-- <span>Node:</span> -->
-      <Select.Root>
+      <Select.Root
+        items={$nodes}
+        onSelectedChange={(e) => {
+          selectedNode.set(e.value);
+        }}
+        bind:selected={selectedValue}
+      >
         <Select.Trigger class="w-full">
           <span class="text-muted-foreground">Node:</span>
-          <Select.Value placeholder="Cameras" class="text-black font-bold" />
+          <Select.Value placeholder="Cameras" />
         </Select.Trigger>
         <Select.Content>
           {#each $nodes as node}
-            <Select.Item value={node.name} label={node.name}
+            <Select.Item value={node.id} label={node.name}
               >{node.name}</Select.Item
             >
           {/each}
         </Select.Content>
-        <Select.Input name="favoriteFruit" />
       </Select.Root>
-
-      <!-- <h2 class="text-base font-semibold">Cameras</h2> -->
       <div
         class={cn(
           "flex items-center",
           smallList ? "justify-between w-full" : "space-x-0"
         )}
       >
-        <AddCameraModal
+        <AddNodeModal
           >{#if !smallList}<GhostIconButton>
               <Icon
                 icon="mdi:add-circle-outline"
@@ -67,7 +79,7 @@
             </GhostIconButton>
           {:else}
             <Button variant="outline" size="sm" class="text-xs">Add</Button>
-          {/if}</AddCameraModal
+          {/if}</AddNodeModal
         >
 
         {#if !smallList}<GhostIconButton>
@@ -151,6 +163,9 @@
         </ul>
       </article>
     {/each}
+    <AddCameraModal>
+      <Button class="w-full truncate">Add a camera</Button>
+    </AddCameraModal>
   </div>
 </div>
 <!-- {/if} -->

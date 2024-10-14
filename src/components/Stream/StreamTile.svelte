@@ -554,10 +554,7 @@
               }
               // console.log("VideoRTC.buffered", start, end);
             }
-          } catch (e) {
-            console.error(e);
-            this.oninit();
-          }
+          } catch (e) {}
         });
 
         const buf = new Uint8Array(2 * 1024 * 1024);
@@ -566,14 +563,10 @@
         this.ondata = (data) => {
           if (this.paused) {
             console.log("VIDEO PAUSED!!!");
-            return;
+            this.onconnect();
           }
           if (this.video.error) {
-            // console.error(
-            //   "Video element has an error, stopping append.",
-            //   this.video.error
-            // );
-            // return;
+            this.onconnect();
           }
           if (sb.updating || bufLen > 0) {
             const b = new Uint8Array(data);
@@ -584,8 +577,7 @@
             try {
               sb.appendBuffer(data);
             } catch (e) {
-              console.error(e);
-              // this.oninit();
+              // console.error(e);
             }
           }
         };

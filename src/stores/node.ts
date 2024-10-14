@@ -19,4 +19,5 @@ const createNodeStore = () => {
   };
 };
 
+export const selectedNode = writable<string>();
 export const nodes = createNodeStore();

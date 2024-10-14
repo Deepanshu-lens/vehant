@@ -47,6 +47,7 @@
     }
 
     if (authData) {
+      console.log(authData);
       user.set(authData.record);
       if (window.api) {
         await window.api.invoke("save-auth-token");

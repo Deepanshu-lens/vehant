@@ -66,6 +66,8 @@ const config = {
       backgroundImage: {
         "login-background": "url('/images/loginBG.png')",
         "login-dark-background": "url('/images/loginBGDark.png')",
+        "dark-add-node": 'url("/images/addNodeDark.png")',
+        "light-add-node": "url('/images/addNodeLight.jpg')",
       },
     },
   },

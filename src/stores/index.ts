@@ -1,6 +1,6 @@
 import { cameras } from "./camera";
-import { nodes } from "./node";
+import { selectedNode, nodes } from "./node";
 import { user } from "./user";
 import { selectedLayout } from "./selectedLayout";
 
-export { cameras, nodes, user, selectedLayout };
+export { cameras, selectedNode, nodes, user, selectedLayout };
