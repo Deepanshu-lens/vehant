@@ -70,14 +70,7 @@
     //   (containerWidth - (columns * itemWidth + gap * (columns - 1))) /
     //     (columns - 1);
 
-    console.log(
-      "old item width: ",
-      itemWidth,
-      columns * itemWidth + gap * (columns - 1),
-      containerWidth
-    );
     itemWidth = (containerWidth - (columns + 1) * gap) / columns;
-    console.log("new item width: ", itemWidth);
     itemHeight = itemWidth / aspectRatio;
 
     // Adjust height if it exceeds container height

@@ -91,6 +91,10 @@
        */
       this.ws = null;
 
+      this.retryCount = 0;
+      this.maxRetries = 5;
+      this.reconnecting = false;
+
       /**
        * @type {string|URL}
        */
@@ -169,14 +173,6 @@
       }
       this.wsURL = value;
       this.onconnect();
-    }
-
-    attributChangeCallback(name, oldValue, newValue) {
-      if (name === "data-url" && oldValue !== newValue) {
-        console.log("data-url changed to:", newValue);
-        // this.wsURL = newValue;  // Update wsURL with new value
-        // this.onconnect();  // Reconnect if needed
-      }
     }
 
     /**
@@ -363,13 +359,13 @@
      * @return {boolean} true if the connection has started.
      */
     onconnect() {
-      // console.log(
-      //   "onconnect",
-      //   !this.isConnected,
-      //   !this.wsURL,
-      //   this.ws,
-      //   this.pc
-      // );
+      console.log(
+        "onconnect",
+        !this.isConnected,
+        !this.wsURL,
+        this.ws,
+        this.pc
+      );
       if (!this.isConnected || !this.wsURL || this.ws || this.pc) return false;
 
       // CLOSED or CONNECTING => CONNECTING
@@ -477,6 +473,50 @@
       return true;
     }
 
+    handleVideoError() {
+      console.error("Handling video element error...");
+
+      // Stop any further buffer append attempts and close WebSocket
+      if (this.ws) {
+        this.ws.close();
+      }
+
+      setTimeout(() => {
+        console.log("disconnecting ....");
+        this.ondisconnect();
+        this.onconnect();
+      }, 3000);
+
+      // Prevent infinite reconnection loops by checking retry count
+      if (this.retryCount >= this.maxRetries) {
+        console.error("Max retries reached, stopping reconnection attempts.");
+        return;
+      }
+
+      if (this.reconnecting) {
+        console.log("Already attempting to reconnect...");
+        return; // Prevent multiple reconnections at the same time
+      }
+
+      this.reconnecting = true; // Set flag to prevent multiple reconnections
+
+      // Reconnect WebSocket or reinitialize the stream after a brief timeout
+      // setTimeout(
+      //   () => {
+      //     this.ondisconnect(); // Disconnect and clean up the existing stream
+      //     this.onconnect(); // Try reconnecting
+
+      //     this.reconnecting = false; // Reset flag after reconnection attempt
+      //     this.retryCount++; // Increment retry count
+
+      //     console.log(
+      //       `Reconnection attempt ${this.retryCount}/${this.maxRetries} ${this.wsURL}`
+      //     );
+      //   },
+      //   Math.min(3000 * this.retryCount, 30000)
+      // ); // Exponential backoff: wait longer after each retry
+    }
+
     onmse() {
       /** @type {MediaSource} */
       let ms;
@@ -525,6 +565,13 @@
         { once: true }
       );
 
+      this.video.addEventListener("error", (e) => {
+        if (this.wsState === WebSocket.OPEN) {
+          console.error("Video element error:", this.video.error);
+          this.handleVideoError(); // Gracefully handle the error
+        }
+      });
+
       this.play();
 
       this.mseCodecs = "";
@@ -554,20 +601,15 @@
               }
               // console.log("VideoRTC.buffered", start, end);
             }
-          } catch (e) {}
+          } catch (e) {
+            console.error("FIRST :", e);
+          }
         });
 
         const buf = new Uint8Array(2 * 1024 * 1024);
         let bufLen = 0;
 
         this.ondata = (data) => {
-          if (this.paused) {
-            console.log("VIDEO PAUSED!!!");
-            this.onconnect();
-          }
-          if (this.video.error) {
-            this.onconnect();
-          }
           if (sb.updating || bufLen > 0) {
             const b = new Uint8Array(data);
             buf.set(b, bufLen);
@@ -577,6 +619,7 @@
             try {
               sb.appendBuffer(data);
             } catch (e) {
+              console.error("SECOND :", e);
               // console.error(e);
             }
           }
