@@ -64,10 +64,10 @@ const config = {
         // base: "0.8125rem", // 15px base font size (adjust as needed)
       },
       backgroundImage: {
-        "login-background": "url('/images/loginBG.png')",
-        "login-dark-background": "url('/images/loginBGDark.png')",
-        "dark-add-node": 'url("/images/addNodeDark.png")',
-        "light-add-node": "url('/images/addNodeLight.jpg')",
+        "login-background": "url('../images/loginBG.png')",
+        "login-dark-background": "url('../images/loginBGDark.png')",
+        "dark-add-node": 'url("../images/addNodeDark.png")',
+        "light-add-node": "url('../images/addNodeLight.jpg')",
       },
     },
   },

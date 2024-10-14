@@ -2,6 +2,7 @@ import { cameraSchema, nodeSchema, userSchema } from "./types";
 import type { Node, Camera, User } from "./types";
 
 export const validateUser = (data: unknown): User | null => {
+  if (!data) return null;
   const parsed = userSchema.safeParse(data);
   if (parsed.success) {
     return parsed.data;

@@ -27,7 +27,15 @@
     onSubmit: async (values) => {
       console.log("Form submitted with:", values);
       const response = await login(values.email, values.password);
-      if (!response) reset();
+      if (!response) {
+        reset();
+        return;
+      }
+      if (window.api) {
+        window.api.navigate("/index");
+      } else {
+        window.location.href = "/";
+      }
     },
     onError: (err) => {
       console.log("Form validation failed:", err);
@@ -50,7 +58,7 @@
       console.log(authData);
       user.set(authData.record);
       if (window.api) {
-        await window.api.invoke("save-auth-token");
+        await window.api.invoke("save-auth-token", pb.authStore.token);
       } else {
         localStorage.setItem("pb_auth_token", pb.authStore.token);
       }
@@ -60,7 +68,9 @@
     return;
   }
 
-  $: $user && (window.location.href = "/");
+  // $: $user && window && window.api
+  //   ? window.api.navigate("/index")
+  //   : (window.location.href = "/");
 </script>
 
 <form use:form class="space-y-4 w-full">
@@ -116,12 +126,18 @@
         Sign In
       {/if}
     </button>
-    <a
-      href="/register"
+    <button
       class="inline-block cursor-pointer align-baseline font-bold text-sm text-[#797c80] /[.7] mt-4"
+      on:click={() => {
+        if (window.api) {
+          window.api.navigate("/register");
+        } else {
+          window.location.href = "/register";
+        }
+      }}
     >
       Don't have an account yet?
       <span class="ml-1 text-primary font-semibold"> Sign up </span>
-    </a>
+    </button>
   </div>
 </form>

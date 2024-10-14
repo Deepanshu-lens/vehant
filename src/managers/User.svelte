@@ -32,7 +32,11 @@
       if (token) {
         user.set(pb.authStore.model);
       } else {
-        window.location.href = "/login";
+        if (window.api) {
+          window.api.navigate("/login");
+        } else {
+          window.location.href = "/login";
+        }
       }
     });
   });

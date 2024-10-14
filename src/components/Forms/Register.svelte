@@ -40,7 +40,11 @@
       if (response) {
         toast.success(`${values.name.split(" ")[0]}, welcome to LENS View.`);
         reset();
-        window.location.href = "/login";
+        if (window.api) {
+          window.api.navigate("/login");
+        } else {
+          window.location.href = "/login";
+        }
         return;
       }
     },
@@ -171,12 +175,18 @@
         Sign In
       {/if}
     </button>
-    <a
-      href="/login"
+    <button
       class="inline-block cursor-pointer align-baseline font-bold text-sm text-[#797c80] /[.7] mt-4"
+      on:click={() => {
+        if (window.api) {
+          window.api.navigate("/login");
+        } else {
+          window.location.href = "/login";
+        }
+      }}
     >
       Already have an account?
       <span class="ml-1 text-primary font-semibold"> Log In </span>
-    </a>
+    </button>
   </div>
 </form>

@@ -16,7 +16,20 @@ import react from "@astrojs/react";
 // https://astro.build/config
 export default defineConfig({
   outDir: "../dist",
+  trailingSlash: "never",
+  base: "/",
+  // vite: {
+  //   build: {
+  //     rollupOptions: {
+  //       output: {
+  //         // Make sure each page generates a flat file like `login.html` instead of `login/index.html`
+  //         entryFileNames: "[name].html",
+  //       },
+  //     },
+  //   },
+  // },
   build: {
+    format: "file",
     assetsPrefix: "./", // Ensures that asset paths are relative
   },
   integrations: [

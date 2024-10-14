@@ -1,9 +1,27 @@
 <script lang="ts">
   import { user } from "@/stores/user";
   import { cn } from "@/lib/utils";
+  import pb from "@/lib/sharedPB";
   import * as Popover from "@/components/ui/popover";
   import * as Avatar from "@/components/ui/avatar";
   let profileOn = false;
+
+  export async function logout() {
+    pb.authStore.clear();
+    user.set(undefined);
+
+    if (window.api) {
+      await window.api.invoke("clear-auth-token");
+    } else {
+      localStorage.removeItem("pb_auth_token");
+    }
+
+    if (window.api) {
+      window.api.navigate("/login");
+    } else {
+      window.location.href = "/login";
+    }
+  }
 </script>
 
 <Popover.Root bind:open={profileOn}>
@@ -43,7 +61,7 @@
       <a class="block py-1.5 px-3.5 hover:bg-accent">Account Settings</a><button
         type="button"
         class="block w-full py-1.5 text-left px-3.5 hover:bg-accent"
-        >Sign out</button
+        on:click={logout}>Sign out</button
       >
     </div></Popover.Content
   >
