@@ -21,6 +21,7 @@
     const record = await pb.collection("node").create(data);
     selectedNode.set(record.id);
   };
+  let shouldUpdateContainer = false;
   $: console.log("SelectedNode: ", $selectedNode);
 </script>
 
@@ -30,16 +31,18 @@
     autoSaveId="LENSViewPaneSize"
     style="height: calc(100vh - 3rem);"
   >
-    <Resizable.Pane default={70}><StreamLayout /></Resizable.Pane>
+    <Resizable.Pane default={70}
+      ><StreamLayout bind:shouldUpdateContainer /></Resizable.Pane
+    >
     <Resizable.Handle withHandle />
     <Resizable.Pane
-      maxSize={22}
+      maxSize={50}
+      defaultSize={22}
       bind:pane={paneOne}
       collapsible={true}
       collapsedSize={4}
       minSize={0}
       onResize={(e) => {
-        console.log(e);
         if (e < 19) {
           smallList = true;
         } else {
@@ -48,6 +51,7 @@
         if (e < 14) {
           paneOne.collapse();
         }
+        shouldUpdateContainer = true;
       }}
     >
       <div class="flex">

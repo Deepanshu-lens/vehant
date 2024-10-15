@@ -11,6 +11,7 @@
   // let currentCameras = [];
 
   // export let cameras = [];
+  export let shouldUpdateContainer = false;
   export let layout = 0;
 
   let currentPage = 0;
@@ -149,6 +150,11 @@
   afterUpdate(() => {
     updateGridItems();
   });
+  $: if (shouldUpdateContainer) {
+    updateGridItems();
+    // Reset the flag after updating
+    shouldUpdateContainer = false;
+  }
   $: {
     currentCameras;
     if (container) {
