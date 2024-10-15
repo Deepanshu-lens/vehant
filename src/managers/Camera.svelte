@@ -9,9 +9,10 @@
   const getInitialCameras = async (nodeId: string) => {
     try {
       const localCameras = await pb.collection("camera").getFullList<Camera>({
-        fields: "id,name,url",
-        filter: `node.id = "${nodeId}"`,
+        fields: "id,name,url,subUrl",
+        filter: `node.id ?= "${nodeId}"`,
       });
+      console.log("LC", localCameras);
       cameras.set(localCameras);
     } catch (error) {
       console.error("Error initializing Camera Manager:", error);

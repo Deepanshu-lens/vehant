@@ -22,6 +22,8 @@ export const cameraSchema = z.lazy(() =>
     id: z.string(),
     name: z.string().min(1, "Camera name is required."),
     url: z.string().url("Invalid URL"),
+    subUrl: z.any(),
+    // subUrl: z.string().url("Invalid URL").nullable().optional(),
     // node: nodeSchema,
   })
 );

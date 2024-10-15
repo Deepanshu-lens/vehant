@@ -150,7 +150,7 @@
       if (name === "data-url" && oldValue !== newValue) {
         this.wsURL = newValue; // Update wsURL with the new value
         if (this.video) {
-          console.log("value ", value, this.video);
+          console.log("value ", this.video);
           this.ondisconnect();
         }
         this.onconnect(); // Reconnect with the new URL
@@ -304,7 +304,7 @@
 
       this.video.style.display = "block"; // fix bottom margin 4px
       this.video.style.width = "100%";
-      // this.video.style.height = "100%";
+      this.video.style.height = "auto";
       this.video.className = "rounded-lg object-cover";
 
       this.loadingState = document.createElement("div");
@@ -376,7 +376,7 @@
       this.changeState("LOADING");
 
       this.connectTS = Date.now();
-
+      console.log("connecting", this.wsURL);
       this.ws = new WebSocket(this.wsURL);
       webSocketInstance = this.ws;
       this.ws.binaryType = "arraybuffer";
@@ -483,11 +483,11 @@
         this.ws.close();
       }
 
-      setTimeout(() => {
-        console.log("disconnecting ....");
-        this.ondisconnect();
-        this.onconnect();
-      }, 3000);
+      // setTimeout(() => {
+      //   console.log("disconnecting ....");
+      //   this.ondisconnect();
+      //   this.onconnect();
+      // }, 3000);
 
       // Prevent infinite reconnection loops by checking retry count
       if (this.retryCount >= this.maxRetries) {
@@ -503,20 +503,20 @@
       this.reconnecting = true; // Set flag to prevent multiple reconnections
 
       // Reconnect WebSocket or reinitialize the stream after a brief timeout
-      // setTimeout(
-      //   () => {
-      //     this.ondisconnect(); // Disconnect and clean up the existing stream
-      //     this.onconnect(); // Try reconnecting
+      setTimeout(
+        () => {
+          this.ondisconnect(); // Disconnect and clean up the existing stream
+          this.onconnect(); // Try reconnecting
 
-      //     this.reconnecting = false; // Reset flag after reconnection attempt
-      //     this.retryCount++; // Increment retry count
+          this.reconnecting = false; // Reset flag after reconnection attempt
+          this.retryCount++; // Increment retry count
 
-      //     console.log(
-      //       `Reconnection attempt ${this.retryCount}/${this.maxRetries} ${this.wsURL}`
-      //     );
-      //   },
-      //   Math.min(3000 * this.retryCount, 30000)
-      // ); // Exponential backoff: wait longer after each retry
+          console.log(
+            `Reconnection attempt ${this.retryCount}/${this.maxRetries} ${this.wsURL}`
+          );
+        },
+        Math.min(3000 * this.retryCount, 30000)
+      ); // Exponential backoff: wait longer after each retry
     }
 
     onmse() {

@@ -161,18 +161,47 @@
   }
 
   function handleReorder({ detail: { items } }) {
-    // currentCameras = items;
     currentCameras = items.map((item) => ({ ...item }));
   }
 
   function fullscreenStream(streamId) {
     const streamElement = document.getElementById(`stream-${streamId}`);
-    // streamElement.style = "";
-    const videoElement = streamElement.querySelector("video");
+    // const videoElement = streamElement.querySelector("lens-view-stream-tile");
+    const stream = currentCameras.find((c) => c.id === streamId);
+    if (streamElement && stream) {
+      console.log("Data url:", stream.url);
+      streamElement.setAttribute(
+        "data-url",
+        `ws://localhost:8080/api/ws?src=${stream.id}_FULL`
+      );
+    }
     if (streamElement.requestFullscreen) {
       streamElement.requestFullscreen({ navigationUI: "show" });
+      document.addEventListener(
+        "fullscreenchange",
+        function handleFullscreenChange() {
+          if (!document.fullscreenElement && stream?.subUrl) {
+            // Reset the data-url when exiting fullscreen
+            streamElement.setAttribute(
+              "data-url",
+              `ws://localhost:8080/api/ws?src=${stream.id}`
+            );
+            console.log(
+              "Exited fullscreen, resetting data-url:",
+              `ws://localhost:8080/api/ws?src=${stream.id}`
+            );
+
+            // Remove the event listener after fullscreen change is handled
+            document.removeEventListener(
+              "fullscreenchange",
+              handleFullscreenChange
+            );
+          }
+        }
+      );
     }
   }
+  $: console.log(currentCameras);
 </script>
 
 {#if currentCameras.length > 0}
@@ -184,7 +213,9 @@
           style="transition: transform 0.3s;"
         >
           <StreamTile
-            url={`ws://localhost:8080/api/ws?src=${stream.id}_FULL`}
+            url={stream.subUrl
+              ? `ws://localhost:8080/api/ws?src=${stream.id}`
+              : `ws://localhost:8080/api/ws?src=${stream.id}_FULL`}
             classes=""
             id={stream.id}
           />
