@@ -25,6 +25,17 @@
     }
   }
 
+  function fullscreenLayout() {
+    const container = document.getElementsByClassName(`layout-container`);
+    if (
+      container.length > 0 &&
+      container[0] &&
+      container[0].requestFullscreen
+    ) {
+      container[0].requestFullscreen();
+    }
+  }
+
   $: console.log("Selected: ", selected); // Log changes for debugging
 </script>
 
@@ -48,16 +59,16 @@
       Search
     </p>
   </span>
-  <span class="group flex-col flex items-center justify-center gap-0.5">
+  <span
+    class="group flex-col flex items-center justify-center gap-0.5"
+    on:click={fullscreenLayout}
+  >
     <!-- <button
       disabled={!features.includes("Grid Fullscreen") || cameraCount === 0} -->
     <button
       class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
-      ><Icon
-        icon="material-symbols:fullscreen"
-        class="h-[22px] w-[22px]"
-      /></button
-    >
+      ><Icon icon="material-symbols:fullscreen" class="h-[22px] w-[22px]" />
+    </button>
     <p
       class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
     >
