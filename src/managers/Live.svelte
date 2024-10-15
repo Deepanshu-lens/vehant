@@ -23,6 +23,7 @@
   };
   let shouldUpdateContainer = false;
   $: console.log("SelectedNode: ", $selectedNode);
+  let isCollapsed = false;
 </script>
 
 {#if $nodes.length > 0}
@@ -40,24 +41,25 @@
       defaultSize={22}
       bind:pane={paneOne}
       collapsible={true}
-      collapsedSize={4}
+      collapsedSize={0}
       minSize={0}
+      onExpand={() => (isCollapsed = false)}
       onResize={(e) => {
-        if (e < 19) {
-          smallList = true;
-        } else {
-          smallList = false;
-        }
-        if (e < 14) {
+        if (e < 10) {
+          // Threshold for easier expansion
           paneOne.collapse();
         }
         shouldUpdateContainer = true;
       }}
     >
-      <div class="flex">
-        <CameraList {smallList} /><QuickActions />
-      </div></Resizable.Pane
-    >
+      <!-- <div class="flex"> -->
+      <CameraList {smallList} />
+      <!-- <QuickActions /> -->
+      <!-- </div> -->
+    </Resizable.Pane>
+    <div style="width: auto;">
+      <QuickActions />
+    </div>
   </Resizable.PaneGroup>
 {:else}
   <div

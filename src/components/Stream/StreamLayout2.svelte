@@ -3,6 +3,7 @@
   import AddNode from "@/components/Nodes/AddNode.svelte";
   import StreamTile from "./StreamTile.svelte";
   import { cameras, selectedLayout } from "@/stores";
+  import { dndzone } from "svelte-dnd-action";
 
   import ChevronLeft from "svelte-radix/ChevronLeft.svelte";
   import ChevronRight from "svelte-radix/ChevronRight.svelte";
@@ -26,8 +27,6 @@
     currentPage * pageSize,
     (currentPage + 1) * pageSize
   );
-
-  $: console.log(cameras);
 
   let container;
   let gridItems = [];
@@ -58,9 +57,8 @@
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
 
-    console.log(containerWidth);
-
     const aspectRatio = 16 / 9;
+    // const aspectRatio = 4 / 4;
     let gap = 8; // Gap between items
 
     let itemWidth = (containerWidth - (columns + 1) * gap) / columns;
@@ -161,17 +159,41 @@
       setTimeout(updateGridItems, 0);
     }
   }
+
+  function handleReorder({ detail: { items } }) {
+    // currentCameras = items;
+    currentCameras = items.map((item) => ({ ...item }));
+  }
+
+  function fullscreenStream(streamId) {
+    const streamElement = document.getElementById(`stream-${streamId}`);
+    // streamElement.style = "";
+    const videoElement = streamElement.querySelector("video");
+    if (streamElement.requestFullscreen) {
+      streamElement.requestFullscreen({ navigationUI: "show" });
+    }
+  }
 </script>
 
 {#if currentCameras.length > 0}
   <div class="layout-container" bind:this={container}>
-    {#each currentCameras as stream, i}
+    {#each currentCameras as stream (stream.id)}
       {#key stream.id}
-        <div class="grid-item rounded-lg">
+        <div
+          class={`grid-item rounded-lg relative group`}
+          style="transition: transform 0.3s;"
+        >
           <StreamTile
             url={`ws://localhost:8080/api/ws?src=${stream.id}_FULL`}
             classes=""
+            id={stream.id}
           />
+          <button
+            class="absolute top-2 right-2 bg-black bg-opacity-70 text-white p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+            on:click={() => fullscreenStream(stream.id)}
+          >
+            Fullscreen</button
+          >
         </div>
       {/key}
     {/each}
@@ -236,5 +258,10 @@
     justify-content: center;
     font-size: 24px;
     color: #333;
+  }
+
+  .dragging {
+    opacity: 0.7;
+    transform: scale(1.05);
   }
 </style>

@@ -6,6 +6,8 @@
 
   let isVideoLoading = true;
 
+  export let id;
+
   let videoElement: HTMLVideoElement | null = null;
   let webSocketInstance: WebSocket | null = null;
 
@@ -300,9 +302,9 @@
       this.video.playsInline = true;
       this.video.preload = "auto";
 
-      this.video.style.display = "none"; // fix bottom margin 4px
+      this.video.style.display = "block"; // fix bottom margin 4px
       this.video.style.width = "100%";
-      this.video.style.height = "100%";
+      // this.video.style.height = "100%";
       this.video.className = "rounded-lg object-cover";
 
       this.loadingState = document.createElement("div");
@@ -820,21 +822,22 @@
     }
   });
 
-  onDestroy(() => {
-    // If WebSocket exists, close it when component is destroyed
-    if (webSocketInstance) {
-      webSocketInstance.close();
-      console.log("WebSocket closed on component destroy.");
-    }
-  });
+  // onDestroy(() => {
+  //   // If WebSocket exists, close it when component is destroyed
+  //   if (webSocketInstance) {
+  //     webSocketInstance.close();
+  //     console.log("WebSocket closed on component destroy.");
+  //   }
+  // });
 
   // customElements.define("lens-view-stream-tile", VideoRTC);
 </script>
 
 <lens-view-stream-tile
   bind:this={videoElement}
-  class="w-full h-full"
+  class="w-full h-full flex"
   data-url={url}
+  id={`stream-${id}`}
 ></lens-view-stream-tile>
 
 <!-- <div class={`bg-rose-200 ${classes}`} style="aspect-ratio: 16/9;"></div> -->
