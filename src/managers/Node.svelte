@@ -10,7 +10,6 @@
         fields: "id,name",
       });
       nodes.set(localNodes);
-      console.log(localNodes[0].id);
       localNodes.length > 0 && selectedNode.set(localNodes[0].id);
     } catch (error) {
       console.error("Error initializing Camera Manager:", error);

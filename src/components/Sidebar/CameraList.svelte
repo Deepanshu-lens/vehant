@@ -5,7 +5,11 @@
   import { Button } from "@/components/ui/button";
   import GhostIconButton from "@/components/ui/custom/GhostIconButton.svelte";
   import AddCameraModal from "@/components/ui/modal/AddCameraModal.svelte";
+  import DeleteCameraModal from "@/components/ui/modal/DeleteCameraModal.svelte";
+  import EditCameraModal from "@/components/ui/modal/EditCameraModal.svelte";
+  import EditNodeModal from "@/components/ui/modal/EditNodeModal.svelte";
   import AddNodeModal from "@/components/ui/modal/AddNodeModal.svelte";
+  import DeleteNodeModal from "@/components/ui/modal/DeleteNodeModal.svelte";
   import Icon from "@iconify/svelte";
   import * as Select from "@/components/ui/select/index.js";
   import { cn } from "@/lib/utils";
@@ -35,6 +39,11 @@
     value: $selectedNode,
     label: $nodes.find((n) => n.id === $selectedNode)?.name,
   };
+  $: console.log(
+    "Selected node changed: ",
+    $selectedNode,
+    $nodes.find((n) => n.id === $selectedNode)?.name
+  );
 </script>
 
 <!-- {#if currentCameras.length > 0} -->
@@ -82,24 +91,35 @@
           {/if}</AddNodeModal
         >
 
-        {#if !smallList}<GhostIconButton>
-            <Icon
-              icon="material-symbols:edit-square-outline"
-              width={20}
-              class="dark:text-white"
-            />
-          </GhostIconButton>{:else}
-          <Button variant="outline" size="sm" class="text-xs dark:text-white"
-            >Edit</Button
-          >
-        {/if}
+        <EditNodeModal>
+          {#if !smallList}
+            <GhostIconButton>
+              <Icon
+                icon="material-symbols:edit-square-outline"
+                width={20}
+                class="dark:text-white"
+              />
+            </GhostIconButton>
+          {:else}
+            <Button variant="outline" size="sm" class="text-xs dark:text-white"
+              >Edit</Button
+            >
+          {/if}</EditNodeModal
+        >
 
-        {#if !smallList}<GhostIconButton>
-            <Icon icon="mdi:trash-outline" width={20} class="dark:text-white" />
-          </GhostIconButton>{:else}
-          <Button variant="outline" size="sm" class="text-xs dark:text-white"
-            >Delete</Button
-          >{/if}
+        <DeleteNodeModal>
+          {#if !smallList}
+            <GhostIconButton>
+              <Icon
+                icon="mdi:trash-outline"
+                width={20}
+                class="dark:text-white"
+              />
+            </GhostIconButton>{:else}
+            <Button variant="outline" size="sm" class="text-xs dark:text-white"
+              >Delete</Button
+            >{/if}</DeleteNodeModal
+        >
       </div>
     </div>
   </section>
@@ -135,30 +155,34 @@
         </div>
 
         <ul
-          class={`flex flex-row gap-0 ${!smallList && "xl:ml-auto"} p-0 list-none cursor-pointer`}
+          class={`flex flex-row gap-0 ${!smallList && "xl:ml-auto"} p-0 list-none cursor-pointer items-end`}
         >
           <li class="cursor-pointer">
-            <GhostIconButton>
-              <Icon
-                icon="material-symbols:edit-square-outline"
-                width={14}
-                class="dark:text-white p-0"
-              />
-            </GhostIconButton>
+            <EditCameraModal {camera}>
+              <GhostIconButton>
+                <Icon
+                  icon="material-symbols:edit-square-outline"
+                  width={14}
+                  class="dark:text-white p-0"
+                />
+              </GhostIconButton>
+            </EditCameraModal>
           </li>
-          <li class="cursor-pointer">
+          <!-- <li class="cursor-pointer">
             <GhostIconButton>
               <Icon icon="mdi:settings" width={14} class="dark:text-white" />
             </GhostIconButton>
-          </li>
+          </li> -->
           <li class="cursor-pointer">
-            <GhostIconButton>
-              <Icon
-                icon="mdi:trash-outline"
-                width={14}
-                class="dark:text-white"
-              />
-            </GhostIconButton>
+            <DeleteCameraModal {camera}>
+              <GhostIconButton>
+                <Icon
+                  icon="mdi:trash-outline"
+                  width={14}
+                  class="dark:text-white"
+                />
+              </GhostIconButton>
+            </DeleteCameraModal>
           </li>
         </ul>
       </article>
