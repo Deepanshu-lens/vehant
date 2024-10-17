@@ -1,9 +1,10 @@
 <script lang="ts">
   import { onMount, afterUpdate } from "svelte";
   import AddNode from "@/components/Nodes/AddNode.svelte";
-  import StreamTile from "./StreamTile.svelte";
+  import StreamTile from "./StreamTile2.svelte";
   import { cameras, selectedLayout } from "@/stores";
   import { dndzone } from "svelte-dnd-action";
+  // import VideoRTCStream from "./Streamer.svelte";
 
   import ChevronLeft from "svelte-radix/ChevronLeft.svelte";
   import ChevronRight from "svelte-radix/ChevronRight.svelte";
@@ -219,6 +220,13 @@
             classes=""
             id={stream.id}
           />
+          <!-- <VideoRTCStream
+            url={stream.subUrl
+              ? `ws://localhost:8080/api/ws?src=${stream.id}`
+              : `ws://localhost:8080/api/ws?src=${stream.id}_FULL`}
+            classes=""
+            id={stream.id}
+          /> -->
           <button
             class="absolute top-2 right-2 bg-black bg-opacity-70 text-white p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity"
             on:click={() => fullscreenStream(stream.id)}
