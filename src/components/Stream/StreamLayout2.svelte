@@ -4,7 +4,7 @@
   import StreamTile from "./StreamTile2.svelte";
   import { cameras, selectedLayout } from "@/stores";
   import { dndzone } from "svelte-dnd-action";
-  // import VideoRTCStream from "./Streamer.svelte";
+  import VideoRTCStream from "./Streamer.svelte";
 
   import ChevronLeft from "svelte-radix/ChevronLeft.svelte";
   import ChevronRight from "svelte-radix/ChevronRight.svelte";

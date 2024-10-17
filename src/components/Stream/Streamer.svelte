@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
 
   export let url: string;
-  export let classes: string;
+  export let classes: string = "";
   export let id: string;
 
   let videoElement: HTMLElement | null = null;
-  let webSocketInstance: WebSocket | null = null;
 
   class VideoRTC extends HTMLElement {
     private video: HTMLVideoElement;
@@ -24,16 +23,17 @@
     private disconnectTID: number = 0;
     private reconnectTID: number = 0;
     private mediaSource: MediaSource | null = null;
-    private sourceBuffer: SourceBuffer | null = null;
+    private sourceBuffers: SourceBuffer[] = [];
+    private errorCount: number = 0;
     private bufferHealthCheckInterval: number | null = null;
 
     private readonly DISCONNECT_TIMEOUT: number = 5000;
     private readonly RECONNECT_TIMEOUT: number = 50000;
-    private readonly BUFFER_HEALTH_CHECK_INTERVAL = 1000; // ms
-    private readonly BUFFER_THRESHOLD = 0.5; // seconds
-    private errorCount: number = 0;
+    private readonly MAX_SOURCE_BUFFERS = 1;
     private readonly MAX_ERROR_COUNT: number = 3;
     private readonly ERROR_RESET_TIMEOUT: number = 30000; // 30 seconds
+    private readonly BUFFER_HEALTH_CHECK_INTERVAL = 1000; // ms
+    private readonly BUFFER_THRESHOLD = 0.5; // seconds
     private readonly CODECS: string[] = [
       "avc1.640029",
       "avc1.64002A",
@@ -44,9 +44,6 @@
       "flac",
       "opus",
     ];
-
-    private sourceBuffers: SourceBuffer[] = [];
-    private readonly MAX_SOURCE_BUFFERS = 1; // Most implementations only support one SourceBuffer per MediaSource
 
     constructor() {
       super();
@@ -149,7 +146,6 @@
 
       this.connectTS = Date.now();
       this.ws = new WebSocket(this.wsURL);
-      webSocketInstance = this.ws;
       this.ws.binaryType = "arraybuffer";
       this.ws.addEventListener("open", () => this.onopen());
       this.ws.addEventListener("close", () => this.onclose());
@@ -209,35 +205,169 @@
       return true;
     }
 
-    // handleVideoError() {
-    //   console.error("Handling video element error...");
+    async resumePlayback() {
+      console.log("Attempting to resume playback");
 
-    //   if (this.ws) {
-    //     this.ws.close();
-    //   }
+      if (this.video.error) {
+        console.error("Video element has an error:", this.video.error);
+        await this.resetVideoElement();
+      }
 
-    //   if (this.retryCount >= this.maxRetries || this.reconnecting) {
-    //     console.error("Max retries reached or already reconnecting.");
-    //     return;
-    //   }
+      if (this.video.paused) {
+        try {
+          await this.video.play();
+          console.log("Playback resumed successfully");
+        } catch (error) {
+          console.error("Error resuming playback:", error);
+          if (error.name === "NotAllowedError") {
+            console.log("Autoplay prevented. Attempting to play muted.");
+            this.video.muted = true;
+            try {
+              await this.video.play();
+              console.log("Muted playback resumed successfully");
+            } catch (mutedError) {
+              console.error("Error resuming muted playback:", mutedError);
+            }
+          }
+        }
+      } else {
+        console.log("Video is already playing");
+      }
 
-    //   this.reconnecting = true;
+      if (this.wsState !== WebSocket.OPEN) {
+        console.log("WebSocket is not open. Attempting to reconnect.");
+        await this.reconnectWebSocket();
+      } else {
+        console.log("WebSocket is already open");
+      }
 
-    //   setTimeout(
-    //     () => {
-    //       this.ondisconnect();
-    //       this.onconnect();
-    //       this.reconnecting = false;
-    //       this.retryCount++;
-    //       console.log(
-    //         `Reconnection attempt ${this.retryCount}/${this.maxRetries} ${this.wsURL}`
-    //       );
-    //     },
-    //     Math.min(3000 * this.retryCount, 30000)
-    //   );
-    // }
+      if (this.mediaSource && this.mediaSource.readyState === "open") {
+        console.log("Checking and refilling buffer");
+        this.checkAndRefillBuffer();
+      } else {
+        console.log(
+          "MediaSource not ready for buffer refill. Attempting to recreate MSE."
+        );
+        await this.recreateMSE();
+      }
+    }
 
-    private async addSourceBuffer(mimeCodec: string) {
+    async reconnectWebSocket() {
+      console.log("Reconnecting WebSocket");
+      if (this.ws) {
+        this.ws.close();
+        this.ws = null;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second before reconnecting
+      return this.onconnect();
+    }
+
+    checkAndRefillBuffer() {
+      if (!this.sourceBuffers[0] || this.sourceBuffers[0].updating) {
+        console.log(
+          "SourceBuffer not available or updating. Skipping buffer refill."
+        );
+        return;
+      }
+
+      const buffered = this.video.buffered;
+      if (buffered.length > 0) {
+        const currentTime = this.video.currentTime;
+        const bufferEnd = buffered.end(buffered.length - 1);
+        const bufferHealth = bufferEnd - currentTime;
+
+        console.log(`Buffer health: ${bufferHealth.toFixed(2)} seconds`);
+
+        if (bufferHealth < 5) {
+          // If less than 5 seconds of buffer
+          console.log("Buffer low. Requesting more data.");
+          this.send({ type: "mse", value: "request_more_data" });
+        } else {
+          console.log("Buffer sufficient. No need to request more data.");
+        }
+      } else {
+        console.log("No buffered data available.");
+      }
+    }
+
+    handleVisibilityChange() {
+      if (document.hidden) {
+        console.log("Tab hidden. Pausing video.");
+        this.video.pause();
+      } else {
+        console.log("Tab visible. Attempting to resume playback.");
+        this.resumePlayback();
+      }
+    }
+
+    async onmse() {
+      const MediaSource =
+        window.MediaSource || (window as any).ManagedMediaSource;
+      this.mediaSource = new MediaSource();
+
+      const sourceOpenPromise = new Promise<void>((resolve) => {
+        const sourceOpenHandler = () => {
+          console.log("MediaSource opened");
+          this.mediaSource!.removeEventListener(
+            "sourceopen",
+            sourceOpenHandler
+          );
+          resolve();
+        };
+        this.mediaSource!.addEventListener("sourceopen", sourceOpenHandler);
+      });
+
+      this.video.src = URL.createObjectURL(this.mediaSource);
+
+      await sourceOpenPromise;
+
+      if (this.mseCodecs) {
+        await this.addSourceBuffer(this.mseCodecs);
+      } else {
+        this.send({
+          type: "mse",
+          value: this.codecs(MediaSource.isTypeSupported),
+        });
+      }
+
+      this.setupVideoEventListeners();
+
+      this.onmessage["mse"] = async (msg) => {
+        if (msg.type !== "mse") return;
+        this.mseCodecs = msg.value;
+        await this.addSourceBuffer(msg.value);
+      };
+    }
+
+    setupVideoEventListeners() {
+      this.video.addEventListener("playing", () => {
+        console.log("Video started playing in MSE mode");
+        this.changeState("LOADED");
+      });
+
+      this.video.addEventListener("pause", () => {
+        console.log("Video paused");
+      });
+
+      this.video.addEventListener("waiting", () => {
+        console.log("Video is waiting for more data");
+        this.changeState("LOADING");
+      });
+
+      this.video.addEventListener("canplay", () => {
+        console.log("Video can start playing");
+        if (this.video.paused) {
+          this.play();
+        }
+      });
+
+      this.video.addEventListener("error", (e) => {
+        console.error("Video error:", this.video.error);
+        this.handleVideoError();
+      });
+    }
+
+    async addSourceBuffer(mimeCodec: string) {
       console.log("Attempting to add SourceBuffer", mimeCodec);
       if (this.sourceBuffers.length >= this.MAX_SOURCE_BUFFERS) {
         console.log("Max SourceBuffers reached. Removing oldest SourceBuffer.");
@@ -258,7 +388,7 @@
       }
     }
 
-    private setupSourceBuffer(sourceBuffer: SourceBuffer) {
+    setupSourceBuffer(sourceBuffer: SourceBuffer) {
       sourceBuffer.mode = "segments";
       const buf = new Uint8Array(2 * 1024 * 1024);
       let bufLen = 0;
@@ -302,7 +432,7 @@
       };
     }
 
-    private handleSourceBufferError(error: any, sourceBuffer: SourceBuffer) {
+    handleSourceBufferError(error: any, sourceBuffer: SourceBuffer) {
       if (error.name === "QuotaExceededError") {
         this.handleQuotaExceeded(sourceBuffer);
       } else {
@@ -310,21 +440,23 @@
         this.handleVideoError();
       }
     }
-    private handleQuotaExceeded(sourceBuffer: SourceBuffer) {
+
+    handleQuotaExceeded(sourceBuffer: SourceBuffer) {
       console.log("Quota exceeded. Removing old data.");
       if (sourceBuffer.buffered.length > 0) {
         const currentTime = this.video.currentTime;
         const bufferEnd = sourceBuffer.buffered.end(
           sourceBuffer.buffered.length - 1
         );
-        const removeEnd = Math.max(currentTime - 10, 0); // Keep 10 seconds before current time
+        const removeEnd = Math.max(currentTime - 10, 0); // Keep 10
+
         if (removeEnd > 0 && removeEnd < bufferEnd) {
           sourceBuffer.remove(0, removeEnd);
         }
       }
     }
 
-    private async handleVideoError() {
+    async handleVideoError() {
       console.log("Handling video error");
       this.errorCount++;
 
@@ -349,7 +481,7 @@
       }, this.ERROR_RESET_TIMEOUT);
     }
 
-    private async handleDecodeError() {
+    async handleDecodeError() {
       console.log("Handling decode error");
       await this.resetVideoElement();
 
@@ -359,97 +491,7 @@
       this.play();
     }
 
-    private async onmse() {
-      const MediaSource =
-        window.MediaSource || (window as any).ManagedMediaSource;
-      this.mediaSource = new MediaSource();
-
-      const sourceOpenPromise = new Promise<void>((resolve) => {
-        const sourceOpenHandler = () => {
-          console.log("MediaSource opened");
-          this.mediaSource!.removeEventListener(
-            "sourceopen",
-            sourceOpenHandler
-          );
-          resolve();
-        };
-        this.mediaSource!.addEventListener("sourceopen", sourceOpenHandler);
-      });
-
-      this.video.src = URL.createObjectURL(this.mediaSource);
-
-      await sourceOpenPromise;
-
-      if (this.mseCodecs) {
-        await this.addSourceBuffer(this.mseCodecs);
-      } else {
-        this.send({
-          type: "mse",
-          value: this.codecs(MediaSource.isTypeSupported),
-        });
-      }
-
-      this.setupVideoEventListeners();
-    }
-
-    private setupVideoEventListeners() {
-      this.video.addEventListener("playing", () => {
-        console.log("Video started playing in MSE mode");
-        this.changeState("LOADED");
-      });
-
-      this.video.addEventListener("pause", () => {
-        console.log("Video paused");
-      });
-
-      this.video.addEventListener("waiting", () => {
-        console.log("Video is waiting for more data");
-        this.changeState("LOADING");
-      });
-
-      this.video.addEventListener("canplay", () => {
-        console.log("Video can start playing");
-        if (this.video.paused) {
-          this.play();
-        }
-      });
-
-      this.video.addEventListener("error", (e) => {
-        console.error("Video error:", this.video.error);
-        this.handleVideoError();
-      });
-    }
-
-    play() {
-      this.video.play().catch(() => {
-        if (!this.video.muted) {
-          this.video.muted = true;
-          this.video.play().catch((er) => {
-            console.warn(er);
-          });
-        }
-      });
-    }
-
-    send(value: object) {
-      if (this.ws) this.ws.send(JSON.stringify(value));
-    }
-
-    codecs(isSupported: (type: string) => boolean) {
-      return this.CODECS.filter((codec) =>
-        isSupported(`video/mp4; codecs="${codec}"`)
-      ).join();
-    }
-
-    handleVisibilityChange() {
-      if (document.hidden) {
-        this.video.pause();
-      } else {
-        this.resumePlayback();
-      }
-    }
-
-    private async resetVideoElement() {
+    async resetVideoElement() {
       console.log("Resetting video element");
       const oldVideo = this.video;
       this.video = document.createElement("video");
@@ -467,54 +509,7 @@
       await this.recreateMSE();
     }
 
-    private async resumePlayback() {
-      console.log("Attempting to resume playback");
-
-      if (this.video.error) {
-        console.error("Video element has an error:", this.video.error);
-        await this.resetVideoElement();
-      }
-
-      if (this.video.paused) {
-        try {
-          await this.video.play();
-          console.log("Playback resumed successfully");
-        } catch (error) {
-          console.error("Error resuming playback:", error);
-          if (error.name === "NotAllowedError") {
-            console.log("Autoplay prevented. Attempting to play muted.");
-            this.video.muted = true;
-            try {
-              await this.video.play();
-              console.log("Muted playback resumed successfully");
-            } catch (mutedError) {
-              console.error("Error resuming muted playback:", mutedError);
-            }
-          }
-        }
-      } else {
-        console.log("Video is already playing");
-      }
-
-      if (this.wsState !== WebSocket.OPEN) {
-        console.log("WebSocket is not open. Attempting to reconnect.");
-        await this.reconnectWebSocket();
-      } else {
-        console.log("WebSocket is already open");
-      }
-
-      if (this.mediaSource && this.mediaSource.readyState === "open") {
-        console.log("Checking and refilling buffer");
-        this.checkAndRefillBuffer();
-      } else {
-        console.log(
-          "MediaSource not ready for buffer refill. Attempting to recreate MSE."
-        );
-        this.recreateMSE();
-      }
-    }
-
-    private async recreateMSE() {
+    async recreateMSE() {
       console.log("Recreating MSE");
       if (this.mediaSource) {
         if (this.mediaSource.readyState === "open") {
@@ -526,25 +521,27 @@
       await this.onmse();
     }
 
-    reconnectWebSocket() {
-      if (this.ws) {
-        this.ws.close();
-      }
-      this.onconnect();
+    play() {
+      this.video.play().catch((error) => {
+        console.error("Error playing video:", error);
+        if (error.name === "NotAllowedError" && !this.video.muted) {
+          console.log("Autoplay prevented. Attempting to play muted.");
+          this.video.muted = true;
+          this.video.play().catch((mutedError) => {
+            console.error("Error playing muted video:", mutedError);
+          });
+        }
+      });
     }
 
-    checkAndRefillBuffer() {
-      if (!this.sourceBuffer || this.sourceBuffer.updating) return;
+    send(value: object) {
+      if (this.ws) this.ws.send(JSON.stringify(value));
+    }
 
-      const buffered = this.video.buffered;
-      if (buffered.length > 0) {
-        const currentTime = this.video.currentTime;
-        const bufferEnd = buffered.end(buffered.length - 1);
-
-        if (bufferEnd - currentTime < 5) {
-          this.send({ type: "mse", value: "request_more_data" });
-        }
-      }
+    codecs(isSupported: (type: string) => boolean) {
+      return this.CODECS.filter((codec) =>
+        isSupported(`video/mp4; codecs="${codec}"`)
+      ).join();
     }
 
     startBufferHealthCheck() {
@@ -587,7 +584,6 @@
 </script>
 
 <lens-view-stream-tile
-  bind:this={videoElement}
   class="w-full h-full flex"
   data-url={url}
   id={`stream-${id}`}
