@@ -11,7 +11,6 @@
   class VideoRTC extends HTMLElement {
     constructor() {
       super();
-
       this.DISCONNECT_TIMEOUT = 500;
       this.RECONNECT_TIMEOUT = 500;
 
@@ -43,6 +42,8 @@
        * @type {boolean}
        */
       this.background = false;
+
+      this.loaded = false;
 
       /**
        * [config] Run stream only when player in the viewport. Stop when user scroll out player.
@@ -218,8 +219,6 @@
     changeState(state: string) {
       if (!this.video) return;
       if (!this.loadingState) return;
-
-      console.log("Change State to ", state);
 
       switch (state) {
         case "LOADING":
@@ -509,7 +508,7 @@
         this.video.srcObject = ms;
       } else {
         ms = new MediaSource(this.codecs(MediaSource.isTypeSupported));
-        // console.log("milgya   ", URL.revokeObjectURL(this.video.src))
+        // console.log("milgya   ", this.video.src);
         ms.addEventListener(
           "sourceopen",
           () => {

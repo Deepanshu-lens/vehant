@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { cameras, nodes, selectedNode } from "@/stores";
   import Sortable from "sortablejs";
+  import { Input } from "@/components/ui/input";
   import { Button } from "@/components/ui/button";
   import GhostIconButton from "@/components/ui/custom/GhostIconButton.svelte";
   import AddCameraModal from "@/components/ui/modal/AddCameraModal.svelte";
@@ -44,6 +45,19 @@
     $selectedNode,
     $nodes.find((n) => n.id === $selectedNode)?.name
   );
+
+  function handleInput(event) {
+    let searchQuery = event.target.value.toLowerCase();
+    let filteredCameras = $cameras.filter((camera) => {
+      const nameMatch = camera.name.toLowerCase().includes(searchQuery);
+      const urlMatch = camera.url.toLowerCase().includes(searchQuery);
+      const subUrlMatch =
+        camera.subUrl && camera.subUrl.toLowerCase().includes(searchQuery);
+      return nameMatch || urlMatch || subUrlMatch;
+    });
+    currentCameras = filteredCameras;
+    console.log(filteredCameras);
+  }
 </script>
 
 <!-- {#if currentCameras.length > 0} -->
@@ -131,6 +145,20 @@
                   rounded-lg`}
     bind:this={cameraItems}
   >
+    <div class="relative">
+      <Icon
+        icon="material-symbols:search-rounded"
+        class="w-22 h-22 absolute left-3 top-1/2 transform -translate-y-1/2 scale-x-[-1]"
+      />
+      <Input
+        type="text"
+        name="text"
+        placeholder="Search..."
+        class="pl-10 w-full border rounded-md"
+        on:input={handleInput}
+      />
+    </div>
+
     {#each currentCameras as camera, index}
       <article
         class={`flex ${smallList ? "flex-col gap-1" : "gap-4"} items-center  p-4 dark:border 

@@ -168,6 +168,7 @@
   function fullscreenStream(streamId) {
     const streamElement = document.getElementById(`stream-${streamId}`);
     // const videoElement = streamElement.querySelector("lens-view-stream-tile");
+    // streamElement.switchToHighQuality();
     const stream = currentCameras.find((c) => c.id === streamId);
     if (streamElement && stream) {
       console.log("Data url:", stream.url);
