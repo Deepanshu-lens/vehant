@@ -1,16 +1,22 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import pb from "@/lib/sharedPB";
+  import Icon from "@iconify/svelte";
+  import { isAlertPanelOpen } from "@/stores";
   import * as Resizable from "@/components/ui/resizable";
   import CameraList from "@/components/Sidebar/CameraList.svelte";
+  import Alerts from "@/components/Sidebar/Alerts.svelte";
   import QuickActions from "@/components/Sidebar/QuickActions.svelte";
   import { PaneResizer, type PaneAPI } from "paneforge";
   import StreamLayout from "@/components/Stream/StreamLayout2.svelte";
   import { selectedNode, nodes, user } from "@/stores";
 
+  $: console.log("Alter: ", $isAlertPanelOpen);
+
   let collapsed = false;
   let paneOne: PaneAPI;
   let smallList = false;
+  let currentPanel = 0;
 
   let nodeName = "";
   const addNode = async () => {
@@ -37,25 +43,72 @@
     >
     <Resizable.Handle withHandle />
     <Resizable.Pane
+      style={`${!isCollapsed ? "overflow: visible;" : "overflow: hidden;"}`}
       maxSize={50}
       defaultSize={22}
       bind:pane={paneOne}
       collapsible={true}
       collapsedSize={0}
       minSize={0}
-      onExpand={() => (isCollapsed = false)}
       onResize={(e) => {
         if (e < 10) {
           // Threshold for easier expansion
+          isCollapsed = true;
           paneOne.collapse();
+        } else {
+          isCollapsed = false;
+          paneOne.expand();
         }
         shouldUpdateContainer = true;
       }}
     >
-      <!-- <div class="flex"> -->
-      <CameraList {smallList} />
-      <!-- <QuickActions /> -->
-      <!-- </div> -->
+      <div class="relative">
+        {#if currentPanel == 0}
+          <CameraList {smallList} />
+        {:else if currentPanel == 1}
+          <Alerts />
+        {/if}
+        {#if $isAlertPanelOpen}
+          <div
+            class="absolute z-30 -translate-x-full top-44 transform -left-8 transition-all duration-500 ease-in-out"
+          >
+            <div class="-rotate-90 flex items-center origin-top-right">
+              <div
+                class={`${currentPanel == 0 ? "text-bold bg-background" : "bg-background/80 "} cursor-pointer h-[32px] rounded-t-xl  text-black dark:text-white px-3 flex items-center whitespace-nowrap shadow-xl z-40 border dark:border-muted-foreground/10`}
+              >
+                <div
+                  class="flex items-center justify-center place-items-center my-auto space-x-2"
+                  on:click={() => (currentPanel = 0)}
+                >
+                  <span>Cameras</span>
+                  <button
+                    class={`text-center items-center flex place-items-center hover:bg-foreground/50 hover:dark:text-black hover:text-white rounded-full hover:m-1`}
+                    on:click={() => isAlertPanelOpen.set(false)}
+                  >
+                    <Icon icon="material-symbols:close-rounded" width={14} />
+                  </button>
+                </div>
+              </div>
+              <div
+                class={`${currentPanel == 1 ? "text-bold bg-background" : "bg-background/80 "} cursor-pointer h-[32px] rounded-t-xl  text-black dark:text-white px-3 flex items-center whitespace-nowrap shadow-xl z-40 border dark:border-muted-foreground/10`}
+              >
+                <div
+                  class="flex items-center justify-center place-items-center my-auto space-x-2"
+                  on:click={() => (currentPanel = 1)}
+                >
+                  <span>Alerts</span>
+                  <button
+                    class={`text-center items-center flex place-items-center hover:bg-foreground/50 hover:dark:text-black hover:text-white rounded-full hover:m-1`}
+                    on:click={() => isAlertPanelOpen.set(false)}
+                  >
+                    <Icon icon="material-symbols:close-rounded" width={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {/if}
+      </div>
     </Resizable.Pane>
     <div style="width: auto;">
       <QuickActions />

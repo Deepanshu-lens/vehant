@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import { selectedLayout } from "@/stores";
+  import { selectedLayout, isAlertPanelOpen } from "@/stores";
   import { cn } from "@/lib/utils";
   import * as Popover from "@/components/ui/popover";
   const maxStreamsPerPage = 36;
@@ -40,10 +40,10 @@
 </script>
 
 <div
-  class="flex flex-col space-y-8 items-center justify-center px-2 h-screen border-l"
+  class="flex flex-col space-y-8 items-center justify-center px-2 h-screen border-l relative"
   style="height:calc(100vh - 3rem);"
 >
-  <span class="group flex-col flex items-center justify-center gap-0.5">
+  <!-- <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
       disabled
       on:click={() => {
@@ -58,7 +58,7 @@
     >
       Search
     </p>
-  </span>
+  </span> -->
   <span
     class="group flex-col flex items-center justify-center gap-0.5"
     on:click={fullscreenLayout}
@@ -76,7 +76,7 @@
     </p>
   </span>
   <!--  -->
-  <span class="group flex-col flex items-center justify-center gap-0.5">
+  <!-- <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
       class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
       ><Icon
@@ -89,12 +89,13 @@
     >
       Add
     </p>
-  </span>
+  </span> -->
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <!-- <button
       disabled={!features.includes("Toggle Alerts")} -->
     <button
       class={` disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
+      on:click={() => isAlertPanelOpen.set(!$isAlertPanelOpen)}
       ><Icon
         icon="material-symbols:notifications-active-outline-rounded"
         class="h-[22px] w-[22px]"
@@ -770,12 +771,13 @@
     </Popover.Root>
     <!-- </LayoutDialog> -->
     <p
-      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
+      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#657274] text-black/[.4] dark:text-white"
     >
       Layouts
     </p>
   </span>
 </div>
+
 <!-- <aside
   class="w-20 bg-gray-200 border-l p-2 flex flex-col space-y-4 items-center"
 >

@@ -15,9 +15,28 @@ let isMenuOpen = false;
 const toggleMenu = () => {
   isMenuOpen = !isMenuOpen;
 };
+
+console.log("!!!!");
 ---
 
 <script src="/menuToggle.js" is:inline></script>
+
+<script>
+  // @ts-nocheck
+  console.log("window", window);
+  navLinks.forEach((link) => {
+    const button = document.getElementById(link.href);
+    if (button) {
+      button.addEventListener("click", () => {
+        if (window.api) {
+          window.api.navigate(link.href);
+        } else {
+          window.location.href = link.href;
+        }
+      });
+    }
+  });
+</script>
 
 <header
   class="h-10 md:h-16 backdrop-blur-lg bg-white/80 shadow-md px-4 md:px-4 lg:px-16 text-gray-600"
@@ -31,8 +50,8 @@ const toggleMenu = () => {
     <nav class="hidden md:flex space-x-4">
       {
         navLinks.map((link) => (
-          <a
-            href={link.href}
+          <button
+            id={link.href}
             class={`text-sm transition-all px-3 py-2 rounded-md ${
               isActive(link.href)
                 ? "font-medium bg-gray-200 text-black"
@@ -40,7 +59,7 @@ const toggleMenu = () => {
             }`}
           >
             {link.name}
-          </a>
+          </button>
         ))
       }
     </nav>
