@@ -15,7 +15,7 @@ import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
-  outDir: "../dist",
+  outDir: !process.env.VERCEL ? "../dist" : "dist",
   trailingSlash: "never",
   base: "/",
   // vite: {
