@@ -38,7 +38,8 @@
       if (streamElement) {
         streamElement.setAttribute(
           "data-url",
-          `ws://localhost:8080/api/ws?src=${camera.id}_FULL`
+          `
+wss://view.lenscorp.cloud/api/ws?src=${camera.id}_FULL`,
         );
       }
     },

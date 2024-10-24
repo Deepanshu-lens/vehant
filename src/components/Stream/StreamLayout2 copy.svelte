@@ -64,7 +64,7 @@
       "old item width: ",
       itemWidth,
       columns * itemWidth + gap * (columns - 1),
-      containerWidth
+      containerWidth,
     );
     itemWidth = (containerWidth - (columns + 1) * gap) / columns;
     console.log("new item width: ", itemWidth);
@@ -113,7 +113,7 @@
       lastRowHeight,
       "\nleftoverWidth: ",
       containerWidth -
-        (columns * itemWidth + gap * (columns - 1)) / (columns - 1)
+        (columns * itemWidth + gap * (columns - 1)) / (columns - 1),
     );
 
     gridItems.forEach((item, index) => {
@@ -171,7 +171,8 @@
     {#each currentCameras as stream, i}
       <div class="grid-item rounded-lg">
         <StreamTile
-          url={`ws://localhost:8080/api/ws?src=${stream.id}_FULL`}
+          url={`
+wss://view.lenscorp.cloud/api/ws?src=${stream.id}_FULL`}
           classes=""
         />
       </div>

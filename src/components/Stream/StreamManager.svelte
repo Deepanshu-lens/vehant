@@ -6,7 +6,7 @@
   // import PocketBase from "pocketbase";
   import { onMount, onDestroy } from "svelte";
 
-  // const pb = new PocketBase("http://localhost:8090");
+  // const pb = new PocketBase("https://pocketbase.lenscorp.cloud");
 
   let layout = 0;
   $: layout = $selectedLayout;

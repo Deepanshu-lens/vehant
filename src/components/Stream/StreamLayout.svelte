@@ -142,36 +142,42 @@
       {#if streamCount === 3 && index === 2}
         <!-- Make the third stream span across the entire width -->
         <StreamTile
-          url={`ws://localhost:8080/api/ws?src=${camera.id}`}
+          url={`
+wss://view.lenscorp.cloud/api/ws?src=${camera.id}`}
           classes="col-span-2 row-span-1 w-full"
         />
       {:else if streamCount === 5}
         {#if index > 2}
           <StreamTile
-            url={`ws://localhost:8080/api/ws?src=${camera.id}`}
+            url={`
+wss://view.lenscorp.cloud/api/ws?src=${camera.id}`}
             classes="col-span-3 row-span-1 w-full"
           />
         {:else}
           <StreamTile
-            url={`ws://localhost:8080/api/ws?src=${camera.id}`}
+            url={`
+wss://view.lenscorp.cloud/api/ws?src=${camera.id}`}
             classes=""
           />
         {/if}
       {:else if streamCount === 7}
         {#if index > 5}
           <StreamTile
-            url={`ws://localhost:8080/api/ws?src=${camera.id}`}
+            url={`
+wss://view.lenscorp.cloud/api/ws?src=${camera.id}`}
             classes="col-span-3 row-span-1"
           />
         {:else}
           <StreamTile
-            url={`ws://localhost:8080/api/ws?src=${camera.id}`}
+            url={`
+wss://view.lenscorp.cloud/api/ws?src=${camera.id}`}
             classes="col-span-1 row-span-1"
           />
         {/if}
       {:else}
         <StreamTile
-          url={`ws://localhost:8080/api/ws?src=${camera.id}_FULL`}
+          url={`
+wss://view.lenscorp.cloud/api/ws?src=${camera.id}_FULL`}
           classes=""
         />
       {/if}
