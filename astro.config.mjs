@@ -15,7 +15,7 @@ export default defineConfig({
   trailingSlash: "never",
   base: "/",
   build: {
-    // format: "file",
+    format: !process.env.VERCEL ? "file" : "directory",
     assetsPrefix: "./", // Ensures that asset paths are relative
   },
   integrations: [
