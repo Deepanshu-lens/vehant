@@ -35,16 +35,16 @@ export default defineConfig({
   integrations: [
     tailwind({ applyBaseStyles: false }),
     svelte(),
-    playformCompress({
-      JavaScript: {
-        terser: {
-          mangle: true,
-          module: true,
-        },
-      },
-    }),
     icon(),
     react(),
+    // playformCompress({
+    //   JavaScript: {
+    //     terser: {
+    //       mangle: true,
+    //       module: true,
+    //     },
+    //   },
+    // }),
   ],
 
   // output: 'hybrid',
