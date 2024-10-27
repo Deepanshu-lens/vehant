@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, afterUpdate } from "svelte";
   import AddNode from "@/components/Nodes/AddNode.svelte";
-  import StreamTile from "./StreamTile2.svelte";
+  import StreamTile from "./StreamTileOptimized.svelte";
   import { cameras, selectedLayout } from "@/stores";
   import { dndzone } from "svelte-dnd-action";
   import VideoRTCStream from "./Streamer.svelte";
@@ -26,7 +26,7 @@
 
   $: currentCameras = $cameras.slice(
     currentPage * pageSize,
-    (currentPage + 1) * pageSize,
+    (currentPage + 1) * pageSize
   );
 
   let container;
@@ -175,7 +175,7 @@
       streamElement.setAttribute(
         "data-url",
         `
-wss://view.lenscorp.cloud/api/ws?src=${stream.id}_FULL`,
+wss://view.lenscorp.cloud/api/ws?src=${stream.id}_FULL`
       );
     }
     if (streamElement.requestFullscreen) {
@@ -188,21 +188,21 @@ wss://view.lenscorp.cloud/api/ws?src=${stream.id}_FULL`,
             streamElement.setAttribute(
               "data-url",
               `
-wss://view.lenscorp.cloud/api/ws?src=${stream.id}`,
+wss://view.lenscorp.cloud/api/ws?src=${stream.id}`
             );
             console.log(
               "Exited fullscreen, resetting data-url:",
               `
-wss://view.lenscorp.cloud/api/ws?src=${stream.id}`,
+wss://view.lenscorp.cloud/api/ws?src=${stream.id}`
             );
 
             // Remove the event listener after fullscreen change is handled
             document.removeEventListener(
               "fullscreenchange",
-              handleFullscreenChange,
+              handleFullscreenChange
             );
           }
-        },
+        }
       );
     }
   }
