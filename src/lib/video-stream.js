@@ -5,42 +5,37 @@ export class VideoStream extends VideoRTC {
     super();
     this.lastTime = 0;
     this.stuckCount = 0;
-    this.MAX_STUCK_COUNT = 3; // Number of checks before refresh
+    this.MAX_STUCK_COUNT = 3;
     this.checkInterval = null;
+    this.playCheckInterval = null;
+    this.lastCheck = Date.now();
+    this.playAttempts = 0;
+    this.MAX_PLAY_ATTEMPTS = 3;
+    this.playTimeout = null;
   }
 
   set divMode(value) {
-    // this.querySelector(".mode").innerText = value;
-    // this.querySelector(".status").innerText = "";
-
-    // Start monitoring when stream starts
     if (value !== "loading" && value !== "error") {
       this.startStreamCheck();
     }
   }
 
-  set divError(value) {
-    // const state = this.querySelector(".mode").innerText;
-    // if (state !== "loading") return;
-    // this.querySelector(".mode").innerText = "error";
-    // this.querySelector(".status").innerText = value;
-  }
+  set divError(value) {}
 
   startStreamCheck() {
-    // Clear any existing interval
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
     }
 
     this.lastTime = this.video.currentTime;
     this.stuckCount = 0;
+    this.lastCheck = Date.now();
 
-    // Check every 2 seconds
     this.checkInterval = setInterval(() => {
-      if (!this.video.paused) {
-        // Only check if video is playing
-        const currentTime = this.video.currentTime;
+      const currentTime = this.video.currentTime;
+      const now = Date.now();
 
+      if (now - this.lastCheck >= 1900) {
         if (currentTime === this.lastTime) {
           this.stuckCount++;
           console.debug(
@@ -56,33 +51,56 @@ export class VideoStream extends VideoRTC {
         }
 
         this.lastTime = currentTime;
+        this.lastCheck = now;
       }
     }, 2000);
   }
 
+  startPlaybackMonitor() {
+    if (this.playCheckInterval) {
+      clearInterval(this.playCheckInterval);
+    }
+
+    this.playCheckInterval = setInterval(() => {
+      if (this.video && this.video.paused && this.video.readyState >= 2) {
+        console.log("Playback paused, attempting to resume...");
+        // Reset play attempts periodically to allow retry after temporary issues
+        if (Date.now() - this.lastPlayAttempt > 5000) {
+          this.playAttempts = 0;
+        }
+        this.playVideo();
+      }
+    }, 1000);
+  }
+
   refreshStream() {
-    // Store current settings
     const currentMode = this.mode;
     const currentMedia = this.media;
 
-    // Disconnect and cleanup
     this.ondisconnect();
 
-    // Reset counters
     this.stuckCount = 0;
     this.lastTime = 0;
+    this.playAttempts = 0;
 
-    // Clear check interval
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
       this.checkInterval = null;
     }
 
-    // Restore settings and reconnect
+    if (this.playCheckInterval) {
+      clearInterval(this.playCheckInterval);
+      this.playCheckInterval = null;
+    }
+
+    if (this.playTimeout) {
+      clearTimeout(this.playTimeout);
+      this.playTimeout = null;
+    }
+
     this.mode = currentMode;
     this.media = currentMedia;
 
-    // Reconnect after a short delay
     setTimeout(() => {
       if (this.wsURL) {
         this.src = this.wsURL;
@@ -90,53 +108,156 @@ export class VideoStream extends VideoRTC {
     }, 1000);
   }
 
+  lastPlayAttempt = 0;
+  isPlayPending = false;
+
+  async playVideo() {
+    // Prevent multiple simultaneous play attempts
+    if (this.isPlayPending) {
+      console.log("Play already pending, skipping attempt");
+      return;
+    }
+
+    // Check max attempts
+    if (this.playAttempts >= this.MAX_PLAY_ATTEMPTS) {
+      console.log("Max play attempts reached, refreshing stream");
+      this.refreshStream();
+      return;
+    }
+
+    // Debounce play attempts
+    const now = Date.now();
+    if (now - this.lastPlayAttempt < 1000) {
+      console.log("Too soon to retry play, waiting...");
+      return;
+    }
+
+    this.isPlayPending = true;
+    this.lastPlayAttempt = now;
+    this.playAttempts++;
+
+    try {
+      if (this.playTimeout) {
+        clearTimeout(this.playTimeout);
+      }
+
+      this.video.muted = true;
+
+      // Add a timeout to catch hanging play attempts
+      const playPromise = this.video.play();
+      this.playTimeout = setTimeout(() => {
+        if (this.isPlayPending) {
+          console.log("Play attempt timed out, retrying...");
+          this.isPlayPending = false;
+          this.playVideo();
+        }
+      }, 3000);
+
+      await playPromise;
+      clearTimeout(this.playTimeout);
+      this.playTimeout = null;
+      this.isPlayPending = false;
+      this.playAttempts = 0; // Reset on successful play
+      console.log("Playback started successfully");
+    } catch (err) {
+      clearTimeout(this.playTimeout);
+      this.playTimeout = null;
+      this.isPlayPending = false;
+
+      console.warn("Play attempt failed:", err);
+
+      if (err.name === "AbortError") {
+        // Wait a bit longer before next attempt on abort
+        setTimeout(() => {
+          this.playVideo();
+        }, 1500);
+      } else if (this.playAttempts >= this.MAX_PLAY_ATTEMPTS) {
+        console.log("Max play attempts reached after error, refreshing stream");
+        this.refreshStream();
+      }
+    }
+  }
+
   oninit() {
-    console.debug("stream.oninit");
     super.oninit();
 
-    this.innerHTML = `
-        <style>
-        video-stream {
-            position: relative;
-        }
-        .info {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 12px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            pointer-events: none;
-        }
-        </style>
-        `;
+    this.style.display = "block";
+    this.style.width = "100%";
+    this.style.height = "100%";
+    this.style.backgroundColor = "#000";
+    this.style.overflow = "hidden";
+    this.style.position = "relative";
 
-    const info = this.querySelector(".info");
-    this.insertBefore(this.video, info);
+    if (this.video) {
+      this.video.style = "";
 
-    // if (this.video) {
-    //   this.video.controls = false;
-    //   this.video.muted = true;
-    //   this.video.style.maxWidth = "100%";
-    //   this.video.style.objectFit = "fill";
-    // }
+      Object.assign(this.video.style, {
+        display: "block",
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        top: "0",
+        left: "0",
+        objectFit: "contain",
+        backgroundColor: "#000",
+        margin: "0",
+        padding: "0",
+      });
+
+      this.video.controls = false;
+      this.video.muted = true;
+      this.video.playsInline = true;
+      this.video.setAttribute("playsinline", "");
+      this.video.setAttribute("webkit-playsinline", "");
+
+      let playStarted = false;
+
+      this.video.addEventListener("loadedmetadata", () => {
+        if (!playStarted) {
+          playStarted = true;
+          this.playVideo();
+        }
+      });
+
+      this.video.addEventListener("canplay", () => {
+        if (!playStarted) {
+          playStarted = true;
+          this.playVideo();
+        }
+      });
+
+      this.startPlaybackMonitor();
+
+      this.video.addEventListener("pause", () => {
+        if (!this.isPlayPending) {
+          console.log("Video paused, attempting to resume...");
+          this.playVideo();
+        }
+      });
+
+      this.video.addEventListener("playing", () => {
+        playStarted = true;
+        this.playAttempts = 0;
+        console.log("Playback started");
+      });
+    }
   }
 
   onconnect() {
     console.debug("stream.onconnect");
     const result = super.onconnect();
-    // if (result) this.divMode = "loading";
     return result;
   }
 
   ondisconnect() {
     console.debug("stream.ondisconnect");
-    // Clear check interval on disconnect
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
       this.checkInterval = null;
+    }
+    if (this.playCheckInterval) {
+      clearInterval(this.playCheckInterval);
+      this.playCheckInterval = null;
     }
     super.ondisconnect();
   }
@@ -149,13 +270,14 @@ export class VideoStream extends VideoRTC {
       console.debug("stream.onmessge", msg);
       switch (msg.type) {
         case "error":
-          this.divError = msg.value;
           break;
         case "mse":
         case "hls":
         case "mp4":
         case "mjpeg":
-          //   this.divMode = msg.type.toUpperCase();
+          if (this.video && this.video.paused) {
+            this.playVideo();
+          }
           break;
       }
     };
@@ -172,8 +294,8 @@ export class VideoStream extends VideoRTC {
     console.debug("stream.onpcvideo");
     super.onpcvideo(ev);
 
-    if (this.pcState !== WebSocket.CLOSED) {
-      //   this.divMode = "RTC";
+    if (this.pcState !== WebSocket.CLOSED && this.video && this.video.paused) {
+      this.playVideo();
     }
   }
 }
