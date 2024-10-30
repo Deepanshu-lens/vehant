@@ -1,18 +1,8 @@
 ---
-import PocketBase from "pocketbase";
-
 import Layout from "../layouts/Layout.astro";
-import NodeManager from "@/managers/Node.svelte";
-import CameraManager from "@/managers/Camera.svelte";
-import UserManager from "@/managers/User.svelte";
 import LiveManager from "@/managers/Live.svelte";
-import { Toaster } from "@/components/ui/sonner";
 ---
 
 <Layout title="LENS View" topbar>
-  <Toaster client:only="svelte" richColors />
-  <UserManager client:only="svelte" />
-  <NodeManager client:only="svelte" />
-  <CameraManager client:only="svelte" />
   <LiveManager client:only="svelte" />
 </Layout>

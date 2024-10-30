@@ -3,6 +3,11 @@ import "@/styles/globals.css";
 // import { ViewTransitions } from "astro:transitions";
 import Topbar from "../components/Topbar/Topbar.astro";
 import { ModeWatcher } from "mode-watcher";
+import NodeManager from "@/managers/Node.svelte";
+import CameraManager from "@/managers/Camera.svelte";
+import UserManager from "@/managers/User.svelte";
+
+import { Toaster } from "@/components/ui/sonner";
 
 interface Props {
   title: string;
@@ -54,6 +59,9 @@ const { title, topbar = false } = Astro.props;
   </head>
   <body class="antialiased">
     <ModeWatcher client:load />
+    <UserManager client:only="svelte" />
+    <NodeManager client:only="svelte" />
+    <CameraManager client:only="svelte" />
     <!-- <Topbar client:only="svelte" transition:persist /> -->
     {topbar && <Topbar />}
 
@@ -63,6 +71,8 @@ const { title, topbar = false } = Astro.props;
 				event.preventDefault();
 			});
 		</script> -->
+
+    <Toaster client:only="svelte" richColors />
   </body>
 </html>
 
