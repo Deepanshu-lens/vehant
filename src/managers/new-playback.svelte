@@ -216,11 +216,10 @@
           const response = await fetch(PLAYBACK_API_URL, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*",
-            },
+        "Content-Type": "application/json",
+    },
             body: JSON.stringify({
-              cameraId: channel.id,
+              cameraID: channel.id,
               cameraDate: formattedDate,
             }),
           });
@@ -374,7 +373,7 @@
           <video
             bind:this={videoRefs[index]}
             class="w-full h-full"
-            src="https://view.lenscorp.cloud/onlineplayback/playbacks/2024_10_28/rcppndbknavrv1n/output.m3u8"
+            src={video}
             autoplay
             muted
             playsinline
@@ -494,11 +493,6 @@
     <div
       class={`${showRightPanel ? "opacity-100" : "opacity-0"} transtion-opacity ease-in-out duration-500 `}
     >
-      <!-- <NodeSelection
-          {nodes}
-          url={NODE_URL ?? "/"}
-          isAllFullScreen={playbackFullscreen}
-        /> -->
       <div class="px-4 py-4 flex flex-col gap-1">
         <Tabs.Root value="byDate">
           <Tabs.List
