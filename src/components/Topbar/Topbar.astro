@@ -1,0 +1,76 @@
+---
+import UserProfile from "@/components/UserProfile/UserProfile.svelte";
+import Logo from "../ui/logo/Logo.astro";
+const navLinks = [
+  { name: "Live", href: "/" },
+  { name: "Playback", href: "/playback" },
+  { name: "Events", href: "/events" },
+  { name: "Gallery", href: "/gallery" },
+  { name: "Configuration", href: "/configuration" },
+  { name: "Reports", href: "/reports" },
+];
+---
+
+<script is:inline>
+  // @ts-nocheck
+  document.addEventListener("DOMContentLoaded", function () {
+    const nav = document.querySelector("nav");
+    const buttons = nav.querySelectorAll("button");
+    buttons.forEach((button) => {
+      if (button) button.addEventListener("click", function() {
+         const href = button.getAttribute("data-href");
+          if (window.api) {
+            window.api.navigate(href);
+          } else {
+            window.location.href = href;
+          }
+      });
+    });
+  });
+// document.addEventListener('DOMContentLoaded', () => {
+//       const nav = document.querySelector("nav");
+//       const buttons = nav.querySelectorAll("button");
+
+//       buttons.forEach((button) => {
+//         button.addEventListener("click", function() {
+//           console.log("!")
+//           // const href = button.getAttribute("data-href");
+//           // if (window.api) {
+//           //   window.api.navigate(href);
+//           // } else {
+//           //   window.location.href = href;
+//           // }
+//         });
+//       });
+//     });
+</script>
+
+<header class="h-10 md:h-12 lg:h-14 px-4 md:px-4 lg:px-20 border-b">
+  <div class="mx-auto w-full flex justify-between items-center h-full">
+    <Logo />
+    <nav class="hidden md:flex space-x-4 md:space-x-6 lg:space-x-10">
+      {
+        navLinks.map((link) => (
+          <button
+            data-href={link.href}
+            class={`text-base transition-all px-3 py-2 rounded-md 
+                    ${
+                      Astro.url.pathname === link.href
+                        ? "font-black text-[#015A62]"
+                        : "font-medium  hover:text-[#015A62]"
+                    }`}
+          >
+            {link.name}
+          </button>
+        ))
+      }
+    </nav>
+
+    <UserProfile client:only="svelte" />
+  </div>
+</header>
+
+
+<script id="navLinksData" type="application/json">
+  {JSON.stringify(navLinks)}
+</script>

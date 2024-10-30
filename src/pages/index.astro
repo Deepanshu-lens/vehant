@@ -1,0 +1,8 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LiveManager from "@/managers/Live.svelte";
+---
+
+<Layout title="LENS View" topbar>
+  <LiveManager client:only="svelte" />
+</Layout>

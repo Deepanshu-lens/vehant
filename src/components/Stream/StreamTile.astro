@@ -1,0 +1,421 @@
+---
+const { url } = Astro.props;
+---
+
+<script>
+    class VideoStreamLib extends HTMLElement {
+        // WebSocket connection to the video stream
+        ws: WebSocket | null = null;
+
+        loadingState: HTMLDivElement | null = null;
+
+        // Video element to display the stream
+        video: HTMLVideoElement | null = null;
+
+        // WebSocket URL for the video stream
+        wsURL: string | null | undefined = "";
+
+        // WebRTC Peer Connection
+        pc: RTCPeerConnection | null = null;
+
+        // WebSocket connection state
+        wsState: number = WebSocket.CLOSED;
+
+        // WebRTC Peer Connection state
+        pcState: number = WebSocket.CLOSED;
+
+        // Timeout durations for disconnect and reconnect
+        DISCONNECT_TIMEOUT: number = 5000;
+        RECONNECT_TIMEOUT: number = 50000;
+
+        // Indicates whether to run the stream in the background
+        background: boolean = true;
+
+        // Threshold for stream visibility
+        visibilityThreshold: number = 0;
+
+        // Checks if the stream should be visible
+        visibilityCheck: boolean = false;
+
+        // WebRTC configuration
+        pcConfig: RTCConfiguration = {
+            iceServers: [{ urls: "stun:3.145.176.80:3478" }],
+            bundlePolicy: "balanced",
+            rtcpMuxPolicy: "require",
+        };
+
+        // WebSocket connection timestamp
+        connectTS: number = 0;
+
+        // Disconnect and reconnect timeout IDs
+        disconnectTID: number = 5000;
+        reconnectTID: number = 50000;
+
+        // Handlers for WebSocket messages and data
+        ondata: ((data: ArrayBuffer) => void) | null = null;
+        onmessage: { [key: string]: (msg: any) => void } = {};
+
+        constructor() {
+            super();
+        }
+
+        changeState(state: string) {
+            if (!this.video) return;
+            if (!this.loadingState) return;
+
+            switch (state) {
+                case "LOADING":
+                    this.loadingState.style.display = "block";
+                    if (this.video) this.video.style.display = "none";
+                    break;
+                case "LOADED":
+                    this.loadingState.style.display = "none";
+                    if (this.video) this.video.style.display = "block";
+                    break;
+                case "ERROR":
+                    this.loadingState.style.display = "block";
+                    this.loadingState.className =
+                        this.loadingState.className.replace(
+                            "bg-gray-300",
+                            "bg-red-300",
+                        );
+                    break;
+            }
+        }
+
+        connectedCallback() {
+            this.wsURL = this.getAttribute("data-url");
+
+            if (this.disconnectTID) {
+                clearTimeout(this.disconnectTID);
+                this.disconnectTID = 0;
+            }
+
+            this.oninit();
+            this.onconnect();
+        }
+
+        disconnectedCallback() {
+            if (this.background || this.disconnectTID) return;
+
+            if (
+                this.wsState === WebSocket.CLOSED &&
+                this.pcState === WebSocket.CLOSED
+            )
+                return;
+
+            this.disconnectTID = window.setTimeout(() => {
+                if (this.reconnectTID) {
+                    clearTimeout(this.reconnectTID);
+                    this.reconnectTID = 0;
+                }
+
+                this.disconnectTID = 0;
+
+                this.ondisconnect();
+            }, this.DISCONNECT_TIMEOUT);
+        }
+
+        oninit() {
+            this.video = document.createElement("video");
+            this.video.controls = false;
+            this.video.playsInline = true;
+            this.video.preload = "auto";
+
+            this.video.style.display = "block";
+            this.video.className = "rounded-lg object-fit ";
+
+            this.loadingState = document.createElement("div");
+            this.loadingState.className =
+                "absolute bg-gray-300 animate-pulse object-fit h-full rounded-lg";
+            this.loadingState.style.width = "100%";
+            this.loadingState.style.height = "100%";
+
+            this.appendChild(this.loadingState);
+            this.appendChild(this.video);
+
+            if (this.background) return;
+
+            if ("hidden" in document && this.visibilityCheck) {
+                document.addEventListener("visibilitychange", () => {
+                    if (document.hidden) {
+                        this.disconnectedCallback();
+                    } else if (this.isConnected) {
+                        this.connectedCallback();
+                    }
+                });
+            }
+
+            if ("IntersectionObserver" in window && this.visibilityThreshold) {
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            if (!entry.isIntersecting) {
+                                this.disconnectedCallback();
+                            } else if (this.isConnected) {
+                                this.connectedCallback();
+                            }
+                        });
+                    },
+                    { threshold: this.visibilityThreshold },
+                );
+                observer.observe(this);
+            }
+        }
+
+        onconnect() {
+            if (!this.isConnected || !this.wsURL || this.ws || this.pc)
+                return false;
+
+            this.wsState = WebSocket.CONNECTING;
+            this.connectTS = Date.now();
+
+            this.ws = new WebSocket(this.wsURL);
+
+            this.ws.binaryType = "arraybuffer";
+            this.ws.addEventListener("open", () => this.onopen());
+            this.ws.addEventListener("close", () => this.onclose());
+
+            console.log("WebSocket Connected");
+            return true;
+        }
+
+        onopen() {
+            console.log("WebSocket Opened");
+            this.wsState = WebSocket.OPEN;
+
+            this.ws &&
+                this.ws.addEventListener("message", (ev) => {
+                    if (typeof ev.data === "string") {
+                        const msg = JSON.parse(ev.data);
+                        if (msg.value) {
+                        }
+                        for (const mode in this.onmessage) {
+                            this.onmessage[mode] && this.onmessage[mode](msg);
+                        }
+                    } else {
+                        this.ondata && this.ondata(ev.data);
+                    }
+                });
+
+            this.ondata = null;
+            this.onmessage = {};
+
+            const modes: string[] = [];
+
+            if ("RTCPeerConnection" in window) {
+                modes.push("webrtc");
+                this.onwebrtc();
+            }
+
+            return modes;
+        }
+
+        // @ts-expect-error
+        override onclose() {
+            console.log("WebSocket Closed");
+            if (this.wsState === WebSocket.CLOSED) return false;
+
+            this.wsState = WebSocket.CONNECTING;
+            this.ws = null;
+
+            const delay = Math.max(
+                this.RECONNECT_TIMEOUT - (Date.now() - this.connectTS),
+                0,
+            );
+
+            this.reconnectTID = window.setTimeout(() => {
+                this.reconnectTID = 0;
+                this.onconnect();
+            }, delay);
+
+            return true;
+        }
+
+        ondisconnect() {
+            this.wsState = WebSocket.CLOSED;
+            if (this.ws) {
+                this.ws.close();
+                this.ws = null;
+            }
+
+            this.pcState = WebSocket.CLOSED;
+            if (this.pc) {
+                this.pc.getSenders().forEach((sender) => {
+                    if (sender.track) sender.track.stop();
+                });
+                this.pc.close();
+                this.pc = null;
+            }
+
+            if (this.video) this.video.src = "";
+            if (this.video) this.video.srcObject = null;
+        }
+
+        send(value: any) {
+            if (this.ws) this.ws.send(JSON.stringify(value));
+        }
+
+        onwebrtc() {
+            const pc = new RTCPeerConnection(this.pcConfig);
+            console.log("WebSocket RTCPeerConnection Created");
+            pc.addEventListener("icecandidate", (ev) => {
+                console.log("ICE Candidate", ev.candidate);
+                // if (ev.candidate && ev.candidate.protocol === "udp") {
+                //     console.error(
+                //         "WRONG CANIDADATE OR PROTOCOL",
+                //         ev.candidate,
+                //         ev.candidate.protocol,
+                //         ev.candidate.protocol === "udp",
+                //     );
+                //     return;
+                // }
+
+                // console.log(" I AM HERE", ev.candidate, ev.candidate?.toJSON());
+
+                const candidate = ev.candidate
+                    ? ev.candidate.toJSON().candidate
+                    : "";
+
+                this.send({ type: "webrtc/candidate", value: candidate });
+            });
+
+            pc.addEventListener("connectionstatechange", () => {
+                if (pc.connectionState === "connected") {
+                    console.log("WebRTC Connected");
+                    const tracks = pc
+                        .getReceivers()
+                        .map((receiver) => receiver.track);
+
+                    /** @type {HTMLVideoElement} */
+                    const video2 = document.createElement("video");
+                    video2.addEventListener(
+                        "loadeddata",
+                        () => this.onpcvideo(video2),
+                        {
+                            once: true,
+                        },
+                    );
+                    video2.srcObject = new MediaStream(tracks);
+                } else if (
+                    pc.connectionState === "failed" ||
+                    pc.connectionState === "disconnected"
+                ) {
+                    console.log("WebRTC Closed");
+                    pc.close(); // stop next events
+
+                    this.pcState = WebSocket.CLOSED;
+                    this.pc = null;
+
+                    this.changeState("ERROR");
+
+                    this.onconnect();
+                }
+            });
+
+            this.onmessage["webrtc"] = (msg) => {
+                switch (msg.type) {
+                    case "webrtc/candidate":
+                        // const candidateText = `candidate:${msg.value.CandidateID} 1 udp ${msg.value.Priority} ${msg.value.IPAddress} ${msg.value.Port} typ srflx raddr 0.0.0.0 rport ${msg.value.Port}`;
+
+                        pc.addIceCandidate({
+                            // candidate: candidateText,
+                            candidate: msg.value,
+                            sdpMid: "0",
+                        }).catch((er) => {
+                            console.warn(er);
+                        });
+                        break;
+                    case "webrtc/answer":
+                        // const sdpTemplate = `v=0\r\no=- ${msg.value.session_ids[0][0]} ${msg.value.session_ids[0][1]} IN IP4 0.0.0.0\r\ns=-\r\nt=0 0\r\na=msid-semantic:WMS*\r\na=fingerprint:sha-256 ${msg.value.fingerprint[0][0]}\r\na=extmap-allow-mixed\r\na=group:BUNDLE 0\r\nm=video 9 UDP/TLS/RTP/SAVPF 102 106 112\r\nc=IN IP4 0.0.0.0\r\na=setup:active\r\na=mid:0\r\na=ice-ufrag:${msg.value.ice_ufrag[0]}\r\na=ice-pwd:${msg.value.ice_pwd[0]}\r\na=rtcp-mux\r\na=rtcp-rsize\r\na=rtpmap:102 H264/90000\r\na=fmtp:102 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f\r\na=rtcp-fb:102 goog-remb \r\na=rtcp-fb:102 transport-cc \r\na=rtcp-fb:102 ccm fir\r\na=rtcp-fb:102 nack \r\na=rtcp-fb:102 nack pli\r\na=rtpmap:106 H264/90000\r\na=fmtp:106 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f\r\na=rtcp-fb:106 goog-remb \r\na=rtcp-fb:106 transport-cc \r\na=rtcp-fb:106 ccm fir\r\na=rtcp-fb:106 nack \r\na=rtcp-fb:106 nack pli\r\na=rtpmap:112 H264/90000\r\na=fmtp:112 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=64001f\r\na=rtcp-fb:112 goog-remb \r\na=rtcp-fb:112 transport-cc \r\na=rtcp-fb:112 ccm fir\r\na=rtcp-fb:112 nack \r\na=rtcp-fb:112 nack pli\r\na=extmap:4 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01\r\na=ssrc:${msg.value.ssrc[0]} cname:go2rtc\r\na=ssrc:${msg.value.ssrc[0]} msid:go2rtc go2rtc-video\r\na=ssrc:${msg.value.ssrc[0]} mslabel:go2rtc\r\na=ssrc:${msg.value.ssrc[0]} label:go2rtc-video\r\na=msid:go2rtc go2rtc-video\r\na=sendonly\r\n`;
+                        pc.setRemoteDescription({
+                            type: "answer",
+                            sdp: msg.value,
+                        }).catch((er) => {
+                            console.warn(er);
+                        });
+
+                        break;
+                    case "error":
+                        if (msg.value.indexOf("webrtc/offer") < 0) return;
+                        pc.close();
+                        this.changeState("ERROR");
+                }
+            };
+
+            this.createOffer(pc).then((offer) => {
+                // var results: { [key: string]: string[] } = {};
+                // const regexPatterns = {
+                //     session_ids: /o=- (\d+) (\d+) IN IP4/,
+                //     fingerprint: /fingerprint:sha-256 ([A-F0-9:]+)/,
+                //     ice_ufrag: /ice-ufrag:(\S+)/,
+                //     ice_pwd: /ice-pwd:(\S+)/,
+                //     ssrc: /ssrc:(\d+)/,
+                // };
+                // for (const key in regexPatterns) {
+                //     const regex =
+                //         regexPatterns[key as keyof typeof regexPatterns];
+                //     const match = offer.sdp.match(regex);
+                //     if (match) {
+                //         results[key] = match.slice(1); // Capture groups
+                //     }
+                // }
+                this.send({
+                    type: "webrtc/offer",
+                    offer: offer.sdp,
+                });
+            });
+
+            this.pcState = WebSocket.CONNECTING;
+            this.pc = pc;
+        }
+
+        /**
+         * @param pc {RTCPeerConnection}
+         * @return {Promise<RTCSessionDescriptionInit>}
+         */
+        async createOffer(pc: any) {
+            pc.addTransceiver("video", { direction: "recvonly" });
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            return offer;
+        }
+
+        /**
+         * @param video2 {HTMLVideoElement}
+         */
+        onpcvideo(video2: any) {
+            if (this.pc && this.video) {
+                /** @type {MediaStream} */
+                const stream = video2.srcObject;
+                this.video.srcObject = stream;
+                this.changeState("LOADED");
+                this.video.play().catch(() => {
+                    if (this.video && !this.video.muted) {
+                        this.video.muted = true;
+                        this.video.play().catch((er) => {
+                            console.warn(er);
+                        });
+                    }
+                });
+
+                this.pcState = WebSocket.OPEN;
+
+                this.wsState = WebSocket.CLOSED;
+                if (this.ws) {
+                    this.ws.close();
+                    this.ws = null;
+                }
+            }
+
+            video2.srcObject = null;
+        }
+    }
+
+    if (typeof window !== "undefined") {
+        customElements.define("lens-view-stream-tile-custom", VideoStreamLib);
+    }
+</script>
+
+<lens-view-stream-tile-custom data-url={url} class="w-full h-full relative"
+></lens-view-stream-tile-custom>

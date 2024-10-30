@@ -1,0 +1,169 @@
+---
+import "@/styles/globals.css";
+// import { ViewTransitions } from "astro:transitions";
+import Topbar from "../components/Topbar/Topbar.astro";
+import { ModeWatcher } from "mode-watcher";
+import NodeManager from "@/managers/Node.svelte";
+import CameraManager from "@/managers/Camera.svelte";
+import UserManager from "@/managers/User.svelte";
+
+import { Toaster } from "@/components/ui/sonner";
+
+interface Props {
+  title: string;
+  topbar: boolean;
+}
+
+const { title, topbar = false } = Astro.props;
+---
+
+<script is:inline>
+  const isBrowser = typeof localStorage !== "undefined";
+  const getThemePreference = () => {
+    if (isBrowser && localStorage.getItem("theme")) {
+      return localStorage.getItem("theme");
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  };
+  const isDark = getThemePreference() === "dark";
+  document.documentElement.classList[isDark ? "add" : "remove"]("dark");
+
+  if (isBrowser) {
+    const observer = new MutationObserver(() => {
+      const isDark = document.documentElement.classList.contains("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+  }
+</script>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- <link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+			rel="preload"
+			as="style"
+		/> -->
+    <title>{title}</title>
+    <!-- <ViewTransitions /> -->
+  </head>
+  <body class="antialiased">
+    <ModeWatcher client:load />
+    <UserManager client:only="svelte" />
+    <NodeManager client:only="svelte" />
+    <CameraManager client:only="svelte" />
+    <!-- <Topbar client:only="svelte" transition:persist /> -->
+    {topbar && <Topbar />}
+
+    <slot />
+    <!-- <script>
+			document.addEventListener("contextmenu", function (event) {
+				event.preventDefault();
+			});
+		</script> -->
+
+    <Toaster client:only="svelte" richColors />
+  </body>
+</html>
+
+<style>
+  /* Lato Regular */
+  @font-face {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 400;
+    src: url("../fonts/lato/Lato-Regular.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  /* Lato Bold */
+  @font-face {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 700;
+    src: url("../fonts/lato/Lato-Bold.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  /* Lato Bold Italic */
+  @font-face {
+    font-family: "Lato";
+    font-style: italic;
+    font-weight: 700;
+    src: url("../fonts/lato/Lato-BoldItalic.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  /* Lato Light */
+  @font-face {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 300;
+    src: url("../fonts/lato/Lato-Light.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  /* Lato Light Italic */
+  @font-face {
+    font-family: "Lato";
+    font-style: italic;
+    font-weight: 300;
+    src: url("../fonts/lato/Lato-LightItalic.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  /* Lato Thin */
+  @font-face {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 100;
+    src: url("../fonts/lato/Lato-Thin.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  /* Lato Thin Italic */
+  @font-face {
+    font-family: "Lato";
+    font-style: italic;
+    font-weight: 100;
+    src: url("../fonts/lato/Lato-ThinItalic.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  /* Lato Italic */
+  @font-face {
+    font-family: "Lato";
+    font-style: italic;
+    font-weight: 400;
+    src: url("../fonts/lato/Lato-Italic.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  /* Lato Black */
+  @font-face {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 900;
+    src: url("../fonts/lato/Lato-Black.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  /* Lato Black Italic */
+  @font-face {
+    font-family: "Lato";
+    font-style: italic;
+    font-weight: 900;
+    src: url("../fonts/lato/Lato-BlackItalic.ttf") format("truetype");
+    font-display: swap;
+  }
+</style>

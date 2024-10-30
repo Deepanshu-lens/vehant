@@ -1,0 +1,8 @@
+---
+import Layout from "../layouts/Layout.astro";
+import NewPlayback from "@/managers/new-playback.svelte";
+---
+
+<Layout title="Playback | LENS View" topbar>
+  <NewPlayback client:only="svelte" />
+</Layout>
