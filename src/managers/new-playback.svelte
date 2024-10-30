@@ -221,7 +221,7 @@
             },
             body: JSON.stringify({
               cameraId: channel.id,
-              date: formattedDate,
+              cameraDate: formattedDate,
             }),
           });
 
