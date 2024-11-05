@@ -7,6 +7,7 @@ const buttonVariants = tv({
   variants: {
     variant: {
       default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow",
+      brand: "bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] text-primary-foreground dark:text-white",
       destructive:
         "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
       outline:

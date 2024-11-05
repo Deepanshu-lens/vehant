@@ -216,8 +216,8 @@
           const response = await fetch(PLAYBACK_API_URL, {
             method: "POST",
             headers: {
-        "Content-Type": "application/json",
-    },
+              "Content-Type": "application/json",
+            },
             body: JSON.stringify({
               cameraID: channel.id,
               cameraDate: formattedDate,
@@ -500,12 +500,12 @@
           >
             <Tabs.Trigger
               value="byDate"
-              class="w-1/2 rounded-md data-[state=active]:bg-brand-foreground dark:data-[state=active]:bg-black data-[state=active]:text-white"
+              class="w-1/2 rounded-md data-[state=active]:bg-gray-300 dark:data-[state=active]:bg-black data-[state=active]:text-black"
               >By Date</Tabs.Trigger
             >
             <Tabs.Trigger
               value="byTime"
-              class="w-1/2 rounded-md data-[state=active]:bg-brand-foreground dark:data-[state=active]:bg-black data-[state=active]:text-white"
+              class="w-1/2 rounded-md data-[state=active]:bg-gray-300 dark:data-[state=active]:bg-black data-[state=active]:text-black"
               >By Time</Tabs.Trigger
             >
           </Tabs.List>

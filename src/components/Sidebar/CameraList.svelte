@@ -8,10 +8,13 @@
   import AddCameraModal from "@/components/ui/modal/AddCameraModal.svelte";
   import DeleteCameraModal from "@/components/ui/modal/DeleteCameraModal.svelte";
   import EditCameraModal from "@/components/ui/modal/EditCameraModal.svelte";
+  import CameraSettingModal from "@/components/ui/modal/CameraSettingModal.svelte";
   import EditNodeModal from "@/components/ui/modal/EditNodeModal.svelte";
   import AddNodeModal from "@/components/ui/modal/AddNodeModal.svelte";
   import DeleteNodeModal from "@/components/ui/modal/DeleteNodeModal.svelte";
   import Icon from "@iconify/svelte";
+  import * as Dialog from "@/components/ui/dialog";
+
   import * as Select from "@/components/ui/select/index.js";
   import { cn } from "@/lib/utils";
 
@@ -196,11 +199,13 @@
               </GhostIconButton>
             </EditCameraModal>
           </li>
-          <!-- <li class="cursor-pointer">
-            <GhostIconButton>
-              <Icon icon="mdi:settings" width={14} class="dark:text-white" />
-            </GhostIconButton>
-          </li> -->
+          <li class="cursor-pointer">
+            <CameraSettingModal>
+              <GhostIconButton>
+                <Icon icon="mdi:settings" width={14} class="dark:text-white" />
+              </GhostIconButton>
+            </CameraSettingModal>
+          </li>
           <li class="cursor-pointer">
             <DeleteCameraModal {camera}>
               <GhostIconButton>

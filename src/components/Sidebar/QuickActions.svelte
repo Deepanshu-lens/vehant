@@ -39,6 +39,7 @@
   $: console.log("Selected: ", selected); // Log changes for debugging
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   class="flex flex-col space-y-8 items-center justify-center px-2 h-screen border-l relative"
   style="height:calc(100vh - 3rem);"
@@ -59,6 +60,7 @@
       Search
     </p>
   </span> -->
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span
     class="group flex-col flex items-center justify-center gap-0.5"
     on:click={fullscreenLayout}
@@ -66,8 +68,8 @@
     <!-- <button
       disabled={!features.includes("Grid Fullscreen") || cameraCount === 0} -->
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
-      ><Icon icon="material-symbols:fullscreen" class="h-[22px] w-[22px]" />
+      class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2`}
+      ><Icon icon="material-symbols:fullscreen" class="h-[22px] w-[22px] dark:text-white" />
     </button>
     <p
       class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
@@ -94,7 +96,7 @@
     <!-- <button
       disabled={!features.includes("Toggle Alerts")} -->
     <button
-      class={` disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
+      class={`group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 text-black/[.4] dark:text-white`}
       on:click={() => isAlertPanelOpen.set(!$isAlertPanelOpen)}
       ><Icon
         icon="material-symbols:notifications-active-outline-rounded"
@@ -110,8 +112,7 @@
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
       disabled
-      on:click={() => addUserLog("user clicked on Register button, top panel")}
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-black/[.4]  group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
     >
       <Icon
         icon="material-symbols:familiar-face-and-zone"
@@ -124,6 +125,7 @@
       Register
     </p>
   </span>
+  <!-- svelte-ignore a11y-missing-attribute -->
   <a
     target="_blank"
     rel="noreferrer"
@@ -132,7 +134,7 @@
     <span class="group flex-col flex items-center justify-center gap-0.5">
       <button
         disabled
-        class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+        class={`disabled:cursor-not-allowed text-black/[.4]  group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
         ><Icon
           icon="material-symbols:screenshot-monitor-outline"
           class="h-[22px] w-[22px]"
@@ -149,7 +151,7 @@
     <!-- <button
       disabled={!features.includes("Change Layouts")} -->
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
+      class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
       ><Icon
         icon="material-symbols:app-registration"
         class="h-[22px] w-[22px]"
@@ -164,7 +166,7 @@
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
       disabled
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
       ><Icon
         icon="material-symbols:fiber-manual-record-outline"
         class="h-[22px] w-[22px]"
@@ -178,7 +180,7 @@
   </span>
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md  border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center `}
+      class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
       ><Icon
         icon="material-symbols:imagesmode-outline"
         class="h-[22px] w-[22px]"
@@ -196,7 +198,7 @@
       <Popover.Trigger let:builder>
         <!-- <Button builders={[builder]} variant="outline">Open</Button> -->
         <button
-          class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+          class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
           ><Icon
             icon="material-symbols:grid-view-outline-rounded"
             class="h-[22px] w-[22px]"

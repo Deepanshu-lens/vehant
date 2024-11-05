@@ -7,6 +7,7 @@
   import { validator } from "@felte/validator-zod";
   import Icon from "@iconify/svelte";
   import { z } from "zod";
+  import { Button } from "@/components/ui/button";
 
   const registerSchema = userSchema
     .pick({
@@ -164,7 +165,8 @@
   </div>
 
   <div class="flex flex-col items-center justify-between mb-10 sm:mb-0">
-    <button
+    <Button
+      variant="brand"
       disabled={$isSubmitting}
       class="bg-[#015A62] hover:bg-[#015A62]/[.4] text-white font-bold py-2 px-4 rounded-md w-full focus:outline-none focus:shadow-outline"
       type="submit"
@@ -174,7 +176,7 @@
       {:else}
         Sign In
       {/if}
-    </button>
+    </Button>
     <button
       class="inline-block cursor-pointer align-baseline font-bold text-sm text-[#797c80] /[.7] mt-4"
       on:click={() => {
