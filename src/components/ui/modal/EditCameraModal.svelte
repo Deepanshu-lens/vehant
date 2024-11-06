@@ -109,7 +109,7 @@ wss://view.lenscorp.cloud/api/ws?src=${camera.id}_FULL`,
         </div>
       </div>
       <div class="flex flex-1 flex-col mx-auto">
-        <Button variant="brand" type="submit" class="bg-[#015A62] text-white font-semibold"
+        <Button variant='vehant' type="submit" class="bg-[#E77817] text-white font-semibold"
           >Confirm</Button
         >
       </div>

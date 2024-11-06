@@ -4,11 +4,7 @@
   // Navigation links
   const navLinks = [
     { name: "Live", href: "/" },
-    { name: "Playback", href: "/playback" },
-    { name: "Events", href: "/events" },
-    { name: "Gallery", href: "/gallery" },
-    { name: "Configuration", href: "/configuration" },
-    { name: "Reports", href: "/reports" },
+
   ];
 
   // Reactive state for menu toggle
@@ -37,8 +33,8 @@
   <nav class="hidden md:flex space-x-4">
     {#each navLinks as link}
       <a
+        aria-disabled="true"
         href={link.href}
-        on:click={() => (currentPath = link.href)}
         class="text-sm dark:text-[#015a62] transition-all px-3 py-2 rounded-md
                     {isActive(link.href)
           ? 'font-medium bg-gray-200 text-black'

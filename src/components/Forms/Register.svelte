@@ -39,7 +39,7 @@
       );
       //   if (!response) reset();
       if (response) {
-        toast.success(`${values.name.split(" ")[0]}, welcome to Tech5.`);
+        toast.success(`${values.name.split(" ")[0]}, welcome to Vehant.`);
         reset();
         if (window.api) {
           window.api.navigate("/login");
@@ -155,7 +155,7 @@
         name="confirmPassword"
         placeholder="Confirm Password"
         class="pl-10 w-full border border-gray-300 rounded-md"
-      />
+    />
     </div>
     <div class="text-rose-500 text-xs">
       {#if $errors.confirmPassword}
@@ -166,9 +166,9 @@
 
   <div class="flex flex-col items-center justify-between mb-10 sm:mb-0">
     <Button
-      variant="brand"
+      variant="vehant"
       disabled={$isSubmitting}
-      class="bg-[#015A62] hover:bg-[#015A62]/[.4] text-white font-bold py-2 px-4 rounded-md w-full focus:outline-none focus:shadow-outline"
+      class="text-white font-bold py-2 px-4 rounded-md w-full focus:outline-none focus:shadow-outline"
       type="submit"
     >
       {#if $isSubmitting}

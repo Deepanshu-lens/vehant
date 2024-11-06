@@ -50,7 +50,7 @@
       on:click={() => {
         addUserLog(`user clicked on Search button, top panel`);
       }}
-      class={`disabled:cursor-not-allowed text-[#727272]/90 h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-[#727272]/90 dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-[#727272]/90 h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-[#727272]/90 dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#E77817] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
     >
       <Icon icon="material-symbols:search" class="h-[22px] w-[22px]" />
     </button>
@@ -83,7 +83,7 @@
   <!--  -->
   <!-- <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
-      class={`disabled:cursor-not-allowed text-[#727272]/90 h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-[#727272]/90 dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-[#727272]/90 h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-[#727272]/90 dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#E77817] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
       ><Icon
         icon="material-symbols:speed-camera-outline-rounded"
         class="h-[22px] w-[22px]"

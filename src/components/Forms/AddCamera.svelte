@@ -198,7 +198,7 @@
   </div>
   <!-- <button
     disabled={$isSubmitting}
-    class="bg-[#015A62] hover:bg-[#015A62]/[.4] text-white font-bold py-2 px-4 rounded-md w-full focus:outline-none focus:shadow-outline"
+    class="bg-[#E77817] hover:bg-[#E77817]/[.4] text-white font-bold py-2 px-4 rounded-md w-full focus:outline-none focus:shadow-outline"
     type="submit"
   >
     {#if $isSubmitting}
@@ -208,7 +208,7 @@
     {/if}
   </button> -->
   <div class="flex flex-1 flex-col mx-auto">
-    <Button type="submit" class="bg-[#015A62] text-white font-semibold"
+    <Button type="submit" class="bg-[#E77817] text-white font-semibold"
       >Confirm</Button
     >
   </div>

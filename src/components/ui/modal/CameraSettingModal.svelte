@@ -402,7 +402,7 @@
 
           <div class="flex justify-end items-end absolute bottom-0 w-full">
             <div class="border-t pt-4 w-full text-right">
-              <Button variant="brand" type="submit">Save Changes</Button>
+              <Button variant='vehant' type="submit">Save Changes</Button>
             </div>
           </div>
         </div>

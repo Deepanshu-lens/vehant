@@ -440,12 +440,12 @@
                   >
                     <button
                       on:click={() => (addDevice = 1)}
-                      class={`rounded-lg text-xs leading-[18px] px-[10px] py-[3px] font-medium w-1/2 h-full ${addDevice === 1 ? "text-white bg-[#015a62]" : "bg-transparent"}`}
+                      class={`rounded-lg text-xs leading-[18px] px-[10px] py-[3px] font-medium w-1/2 h-full ${addDevice === 1 ? "text-white bg-[#E77817]" : "bg-transparent"}`}
                       >Camera</button
                     >
                     <button
                       on:click={() => (addDevice = 2)}
-                      class={`rounded-lg text-xs leading-[18px] px-[10px] py-[3px] font-medium w-1/2 h-full ${addDevice === 2 ? "text-white bg-[#015a62]" : "bg-transparent"}`}
+                      class={`rounded-lg text-xs leading-[18px] px-[10px] py-[3px] font-medium w-1/2 h-full ${addDevice === 2 ? "text-white bg-[#E77817]" : "bg-transparent"}`}
                       >NVR</button
                     >
                   </div>
@@ -781,7 +781,7 @@
                 disabled
                 type="submit"
                 on:click={() => handleAddNode()}
-                variant="brand"
+                variant='vehant'
                 class="w-full">Submit</Button
               >
             </div>
@@ -790,7 +790,7 @@
             <Button
               disabled
               class="mt-auto w-32 self-end m-4"
-              variant="brand"
+              variant='vehant'
               on:click={() => handleAddSubNodes()}>Submit</Button
             >
           {:else if modeAdd === 3}
@@ -799,7 +799,7 @@
               <Button
                 disabled
                 class="mt-auto w-32 self-end m-4"
-                variant="brand"
+                variant='vehant'
                 on:click={onSubmit}
                 type="submit">Submit</Button
               >
@@ -808,7 +808,7 @@
               <Button
                 disabled
                 class="mt-auto w-32 self-end m-4"
-                variant="brand"
+                variant='vehant'
                 on:click={onSubmitNVR}
                 type="submit">Add NVR</Button
               >
@@ -818,7 +818,7 @@
             <Button
               disabled
               class="mt-auto w-32 self-end m-4"
-              variant="brand"
+              variant='vehant'
               type="submit">Submit</Button
             >
           {/if}

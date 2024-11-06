@@ -201,7 +201,7 @@
           <li class="cursor-pointer">
             <CameraSettingModal>
               <GhostIconButton>
-                <Icon icon="mdi:settings" class="dark:text-whit size-4" />
+                <Icon icon="mdi:settings" class="dark:text-white size-4" />
               </GhostIconButton>
             </CameraSettingModal>
           </li>

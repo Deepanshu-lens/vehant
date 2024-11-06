@@ -145,8 +145,8 @@
         class="w-[480px] text-black dark:text-white dark:bg-background bg-transparent font-medium px-4 h-[48px] rounded-md border-2 border-solid border-[#015a62] dark:border-none mb-6"
       />
       <Button
-        variant="brand"
-        class="flex max-w-[160px] hover:bg-[#015a62]/[.9] dark:bg-transparent bg-[#015a62] border-2 border-white border-solid dark:hover:bg-[white] dark:hover:text-[#015a62] text-md text-white items-center justify-center py-2 px-6 font-medium rounded-lg"
+        variant='vehant'
+        class="flex max-w-[160px] hover:bg-[#E77817]/[.9] dark:bg-transparent bg-[#E77817] border-2 border-white border-solid dark:hover:bg-[white] dark:hover:text-[#015a62] text-md text-white items-center justify-center py-2 px-6 font-medium rounded-lg"
         type="submit"
         on:click={addNode}
       >

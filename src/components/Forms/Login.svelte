@@ -117,9 +117,9 @@
 
   <div class="flex flex-col items-center justify-between mb-10 sm:mb-0">
     <Button
-      variant="brand"
+      variant="vehant"
       disabled={$isSubmitting}
-      class="bg-[#015A62] hover:bg-[#015A62]/[.4] text-white font-bold py-2 px-4 rounded-md w-full focus:outline-none focus:shadow-outline"
+      class="text-white font-bold py-2 px-4 rounded-md w-full focus:outline-none focus:shadow-outline"
       type="submit"
     >
       {#if $isSubmitting}

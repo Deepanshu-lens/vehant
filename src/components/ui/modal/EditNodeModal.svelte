@@ -39,7 +39,7 @@
     <Dialog.Footer class="flex items-center justify-between">
       <Button
         type="submit"
-        class="bg-[#015A62] text-white font-semibold"
+        class="bg-[#E77817] text-white font-semibold"
         on:click={editNode}
         disabled={nodeName === ""}>Confirm</Button
       >
