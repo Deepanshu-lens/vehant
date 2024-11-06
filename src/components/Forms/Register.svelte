@@ -39,7 +39,7 @@
       );
       //   if (!response) reset();
       if (response) {
-        toast.success(`${values.name.split(" ")[0]}, welcome to LENS View.`);
+        toast.success(`${values.name.split(" ")[0]}, welcome to Tech5.`);
         reset();
         if (window.api) {
           window.api.navigate("/login");

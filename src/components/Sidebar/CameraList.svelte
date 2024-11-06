@@ -193,8 +193,7 @@
               <GhostIconButton>
                 <Icon
                   icon="material-symbols:edit-square-outline"
-                  width={14}
-                  class="dark:text-white p-0"
+                  class="dark:text-white p-0 size-4"
                 />
               </GhostIconButton>
             </EditCameraModal>
@@ -202,7 +201,7 @@
           <li class="cursor-pointer">
             <CameraSettingModal>
               <GhostIconButton>
-                <Icon icon="mdi:settings" width={14} class="dark:text-white" />
+                <Icon icon="mdi:settings" class="dark:text-whit size-4" />
               </GhostIconButton>
             </CameraSettingModal>
           </li>
@@ -212,7 +211,7 @@
                 <Icon
                   icon="mdi:trash-outline"
                   width={14}
-                  class="dark:text-white"
+                  class="dark:text-white size-4"
                 />
               </GhostIconButton>
             </DeleteCameraModal>

@@ -91,49 +91,49 @@
         class="w-full flex "
       >
         <!-- Right Side tabs -->
-        <div class="h-[30rem] bg-neutral-100 dark:bg-neutral-300">
+        <div class="h-[30rem] bg-neutral-100 dark:bg-black dark:text-white">
           <TabsList
-            class="flex p-5 flex-col gap-y-4 justify-start items-start w-full mx-auto bg-[#F3F3F3] dark:bg-neutral-300 dark:text-black"
+            class="flex p-5 flex-col gap-y-4 justify-start items-start w-full mx-auto bg-[#F3F3F3]  dark:bg-black"
           >
             <TabsTrigger
               value="video-saving"
-              class="w-full flex items-center justify-start"
+              class="w-full flex items-center justify-start dark:hover:bg-neutral-700"
             >
               <FileVideo2 size={16} class="mr-2" />Video Saving
             </TabsTrigger>
             <TabsTrigger
               value="face-scanning"
-              class="w-full flex items-center justify-start"
+              class="w-full flex items-center justify-start dark:hover:bg-neutral-700"
             >
               <ScanFace size={16} class="mr-2" />Face Scanning
             </TabsTrigger>
             <TabsTrigger
               value="running-detection"
-              class="w-full flex items-center justify-start"
+              class="w-full flex items-center justify-start dark:hover:bg-neutral-700"
             >
               <Footprints size={16} class="mr-2" />Running Detection
             </TabsTrigger>
             <TabsTrigger
               value="intrusion-detection"
-              class="w-full flex items-center justify-start"
+              class="w-full flex items-center justify-start dark:hover:bg-neutral-700"
             >
               <PersonStanding size={16} class="mr-2" />Intrusion Detection
             </TabsTrigger>
             <TabsTrigger
               value="line-crossing"
-              class="w-full flex items-center justify-start"
+              class="w-full flex items-center justify-start dark:hover:bg-neutral-700"
             >
               <Pipette size={16} class="mr-2" />Line Crossing
             </TabsTrigger>
             <TabsTrigger
               value="priority"
-              class="w-full flex items-center justify-start"
+              class="w-full flex items-center justify-start dark:hover:bg-neutral-700"
             >
               <Siren size={16} class="mr-2" />Priority
             </TabsTrigger>
             <TabsTrigger
               value="motion-sensitivity"
-              class="w-full flex items-center justify-start"
+              class="w-full flex items-center justify-start dark:hover:bg-neutral-700"
             >
               <Activity size={16} class="mr-2" />Motion Sensitivity
             </TabsTrigger>

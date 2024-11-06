@@ -31,7 +31,7 @@
   let uploadMode = 1;
   let addMode = 1;
   export let addSubNode = false;
-  let modeAdd =  addSubNode ? 2 : 1;
+  let modeAdd = addSubNode ? 2 : 1;
   let addNodeCounter = 1;
   let subNodeCounter = 1;
   let addDevice = 1;
@@ -228,7 +228,7 @@
 
     if (invalidNodes.length > 0) {
       toast.error(
-        '"_" are not allowed for Node names, please try with some other name!',
+        '"_" are not allowed for Node names, please try with some other name!'
       );
       return;
     }
@@ -264,7 +264,7 @@
 
     if (invalidSubNodes.length > 0) {
       toast.error(
-        '"_" are not allowed for subNode names, please try with some other name!',
+        '"_" are not allowed for subNode names, please try with some other name!'
       );
       return;
     }
@@ -312,21 +312,23 @@
 
     <div class="flex h-[30rem]">
       <!-- sidebar content -->
-      <div class="w-1/3 border-r px-4 bg-[#F3F3F3] h-full">
+      <div
+        class="w-1/3 border-r px-4 bg-[#F3F3F3] dark:bg-black dark:text-white h-full"
+      >
         <button
-          class="font-semibold w-full text-left my-3 px-4 py-2 rounded-md {modeAdd ===
+          class="font-semibold w-full text-left my-3 px-4 py-2 rounded-md dark:hover:bg-neutral-700 {modeAdd ===
           1
-            ? 'bg-white shadow-md'
-            : 'hover:bg-white'}"
+            ? 'dark:bg-neutral-700 shadow-md bg-white'
+            : 'dark:hover:bg-neutral-700'}"
           on:click={() => (modeAdd = 1)}
         >
           Add Node
         </button>
         <button
-          class="font-semibold w-full text-left my-3 px-4 py-2 rounded-md {modeAdd ===
+          class="font-semibold w-full text-left my-3 px-4 py-2 rounded-md dark:hover:bg-neutral-700 {modeAdd ===
           2
-            ? 'bg-white shadow-md'
-            : 'hover:bg-white'}"
+            ? 'dark:bg-neutral-700 shadow-md bg-white'
+            : 'dark:hover:bg-neutral-700'}"
           on:click={() => (modeAdd = 2)}
         >
           Add Sub-node
@@ -334,8 +336,8 @@
         <button
           class="font-semibold w-full text-left my-3 px-4 py-2 rounded-md {modeAdd ===
           3
-            ? 'bg-white shadow-md'
-            : 'hover:bg-white'}"
+            ? 'dark:bg-neutral-700 shadow-md bg-white'
+            : 'dark:hover:bg-neutral-700'}"
           on:click={() => (modeAdd = 3)}
         >
           Add Camera
@@ -343,8 +345,8 @@
         <button
           class="font-semibold w-full text-left my-3 px-4 py-2 rounded-md {modeAdd ===
           4
-            ? 'bg-white shadow-md'
-            : 'hover:bg-white'}"
+            ? 'dark:bg-neutral-700 shadow-md bg-white'
+            : 'dark:hover:bg-neutral-700'}"
           on:click={() => (modeAdd = 4)}
         >
           Add Server
@@ -371,7 +373,7 @@
                   id="node-name"
                   placeholder="Office"
                   bind:value={nodeName[index]}
-                  class="w-96 bg-[#F6F6F6] mt-1"
+                  class="w-96 bg-[#F6F6F6] dark:bg-neutral-400 mt-1 dark:text-black dark:placeholder:text-black"
                 />
               </div>
             {/each}
@@ -388,12 +390,12 @@
               <div class=" items-center gap-4 py-2">
                 <Label for={`node-name`}>Select Node</Label>
                 <div class="relative col-span-3 mt-1">
-                  <ChevronDown
+                  <!-- <ChevronDown
                     size={18}
                     class="text-[#727272] absolute top-1/2 pointer-events-none -translate-y-1/2 right-2"
-                  />
+                  /> -->
                   <select
-                    class="w-full p-2 border border-gray-300 bg-[#F6F6F6] rounded-md"
+                    class="w-full p-2 border border-gray-300 bg-[#F6F6F6] dark:bg-neutral-400 rounded-md"
                     bind:value={chosenNode}
                   >
                     {#if nodes && nodes.length > 0}
@@ -412,7 +414,7 @@
                   id="sub-node"
                   placeholder="Office"
                   bind:value={subNodeNames[index]}
-                  class="w-full bg-[#F6F6F6] mt-1"
+                  class="w-96 bg-[#F6F6F6] dark:bg-neutral-400 mt-1 dark:text-black dark:placeholder:text-black"
                 />
               </div>
             {/each}
@@ -434,7 +436,7 @@
                     <h2 class="text-xl font-bold">Add Camera</h2>
                   </div>
                   <div
-                    class="flex items-center justify-center rounded-lg border-black/[.13] border-solid border-[1px] p-1 w-[200px] h-[40px] mx-auto"
+                    class="flex items-center justify-center rounded-lg dark:border-neutral-400 border-black border-solid border-[1px] p-1 w-[200px] h-[40px] mx-auto"
                   >
                     <button
                       on:click={() => (addDevice = 1)}
@@ -459,7 +461,7 @@
                         </div>
                         <Select.Root bind:value={selectedMethod}>
                           <Select.Trigger
-                            class="w-40 border-none box-shadow-none"
+                            class="w-40 border-none box-shadow-none dark:border-neutral-200"
                           >
                             <Select.Value placeholder="Select method" />
                           </Select.Trigger>
@@ -474,10 +476,15 @@
                       <div class="flex items-center space-x-8">
                         <Select.Root
                           bind:value={selectedLens}
-                          class="flex-grow"
+                          class="flex-grow dark:text-black dark:placeholder:text-black"
                         >
-                          <Select.Trigger class="w-64 bg-gray-100">
-                            <Select.Value placeholder="Select lens" />
+                          <Select.Trigger
+                            class="w-64 bg-gray-100 dark:bg-neutral-500 mt-1 dark:text-black dark:placeholder:text-black"
+                          >
+                            <Select.Value
+                              placeholder="Select lens"
+                              class="dark:text-black text-white"
+                            />
                           </Select.Trigger>
                           <Select.Content>
                             {#each lenses as lens}
@@ -753,7 +760,7 @@
                   id="ip-address-{index}"
                   placeholder="Enter IP Address"
                   bind:value={serverIPs[index]}
-                  class="w-full bg-[#F6F6F6] mt-2 mb-2"
+                  class="w-96 bg-[#F6F6F6] dark:bg-neutral-400 mt-1 dark:text-black dark:placeholder:text-black"
                 />
               {/each}
             </div>
@@ -771,6 +778,7 @@
             <!-- Add Node -->
             <div class="mt-auto w-32 self-end m-4">
               <Button
+                disabled
                 type="submit"
                 on:click={() => handleAddNode()}
                 variant="brand"
@@ -780,6 +788,7 @@
           {:else if modeAdd === 2}
             <!-- Add Sub-Node -->
             <Button
+              disabled
               class="mt-auto w-32 self-end m-4"
               variant="brand"
               on:click={() => handleAddSubNodes()}>Submit</Button
@@ -788,6 +797,7 @@
             {#if addDevice === 1}
               <!-- Add Camera -->
               <Button
+                disabled
                 class="mt-auto w-32 self-end m-4"
                 variant="brand"
                 on:click={onSubmit}
@@ -796,6 +806,7 @@
             {:else}
               <!-- Add NVR -->
               <Button
+                disabled
                 class="mt-auto w-32 self-end m-4"
                 variant="brand"
                 on:click={onSubmitNVR}
@@ -805,6 +816,7 @@
           {:else}
             <!-- Add Server -->
             <Button
+              disabled
               class="mt-auto w-32 self-end m-4"
               variant="brand"
               type="submit">Submit</Button

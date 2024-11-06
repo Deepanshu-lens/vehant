@@ -50,12 +50,12 @@
       on:click={() => {
         addUserLog(`user clicked on Search button, top panel`);
       }}
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-[#727272]/90 h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-[#727272]/90 dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
     >
       <Icon icon="material-symbols:search" class="h-[22px] w-[22px]" />
     </button>
     <p
-      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
+      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-[#727272]/90 dark:text-white"
     >
       Search
     </p>
@@ -68,11 +68,14 @@
     <!-- <button
       disabled={!features.includes("Grid Fullscreen") || cameraCount === 0} -->
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2`}
-      ><Icon icon="material-symbols:fullscreen" class="h-[22px] w-[22px] dark:text-white" />
+      class={`disabled:cursor-not-allowed text-[#727272]/90 group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 border border-[#727272]`}
+      ><Icon
+        icon="material-symbols:fullscreen"
+        class="h-[22px] w-[22px] dark:text-white"
+      />
     </button>
     <p
-      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
+      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-[#727272]/90 dark:text-white"
     >
       Fullscreen
     </p>
@@ -80,14 +83,14 @@
   <!--  -->
   <!-- <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-black/[.4] dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
+      class={`disabled:cursor-not-allowed text-[#727272]/90 h-[30px] w-[30px] rounded-full shadow-md group border-2 border-solid border-[#727272]/90 dark:border-white/[.4] bg-white dark:bg-black dark:text-white group-hover:text-white group-hover:bg-[#015a62] dark:group-hover:bg-[#258d9d] group-hover:border-none grid place-items-center`}
       ><Icon
         icon="material-symbols:speed-camera-outline-rounded"
         class="h-[22px] w-[22px]"
       />
     </button>
     <p
-      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
+      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-[#727272]/90 dark:text-white"
     >
       Add
     </p>
@@ -96,7 +99,7 @@
     <!-- <button
       disabled={!features.includes("Toggle Alerts")} -->
     <button
-      class={`group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 text-black/[.4] dark:text-white`}
+      class={`group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 text-[#727272]/90 dark:text-white border border-[#727272]/90`}
       on:click={() => isAlertPanelOpen.set(!$isAlertPanelOpen)}
       ><Icon
         icon="material-symbols:notifications-active-outline-rounded"
@@ -104,7 +107,7 @@
       /></button
     >
     <p
-      class={`text-xs ${"group-hover:text-[#015a62] text-black/[.4] dark:text-white dark:group-hover:text-[#258d9d]"}`}
+      class={`text-xs ${"group-hover:text-[#015a62] text-[#727272]/90 dark:text-white dark:group-hover:text-[#258d9d]"}`}
     >
       Alerts
     </p>
@@ -112,7 +115,7 @@
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
       disabled
-      class={`disabled:cursor-not-allowed text-black/[.4]  group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
+      class={`disabled:cursor-not-allowed text-[#727272]/90  group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white border border-[#727272]/90`}
     >
       <Icon
         icon="material-symbols:familiar-face-and-zone"
@@ -120,7 +123,7 @@
       />
     </button>
     <p
-      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
+      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-[#727272]/90 dark:text-white"
     >
       Register
     </p>
@@ -134,14 +137,14 @@
     <span class="group flex-col flex items-center justify-center gap-0.5">
       <button
         disabled
-        class={`disabled:cursor-not-allowed text-black/[.4]  group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
+        class={`disabled:cursor-not-allowed text-[#727272]/90  group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white border border-[#727272]/90`}
         ><Icon
           icon="material-symbols:screenshot-monitor-outline"
           class="h-[22px] w-[22px]"
         /></button
       >
       <p
-        class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
+        class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-[#727272]/90 dark:text-white"
       >
         Extend
       </p>
@@ -151,14 +154,14 @@
     <!-- <button
       disabled={!features.includes("Change Layouts")} -->
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
+      class={`disabled:cursor-not-allowed text-[#727272]/90 group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white border border-[#727272]/90`}
       ><Icon
         icon="material-symbols:app-registration"
         class="h-[22px] w-[22px]"
       />
     </button>
     <p
-      class={`text-xs ${"group-hover:text-[#015a62] text-black/[.4] dark:text-white dark:group-hover:text-[#258d9d]"}`}
+      class={`text-xs ${"group-hover:text-[#015a62] text-[#727272]/90 dark:text-white dark:group-hover:text-[#258d9d]"}`}
     >
       Mark ROI
     </p>
@@ -166,28 +169,28 @@
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
       disabled
-      class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
+      class={`disabled:cursor-not-allowed text-[#727272]/90 group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white border border-[#727272]/90`}
       ><Icon
         icon="material-symbols:fiber-manual-record-outline"
         class="h-[22px] w-[22px]"
       />
     </button>
     <p
-      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
+      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-[#727272]/90 dark:text-white"
     >
       Record
     </p>
   </span>
   <span class="group flex-col flex items-center justify-center gap-0.5">
     <button
-      class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
+      class={`disabled:cursor-not-allowed text-[#727272]/90 group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white border border-[#727272]/90`}
       ><Icon
         icon="material-symbols:imagesmode-outline"
         class="h-[22px] w-[22px]"
       />
     </button>
     <p
-      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-black/[.4] dark:text-white"
+      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#258d9d] text-[#727272]/90 dark:text-white"
     >
       Snip
     </p>
@@ -198,7 +201,7 @@
       <Popover.Trigger let:builder>
         <!-- <Button builders={[builder]} variant="outline">Open</Button> -->
         <button
-          class={`disabled:cursor-not-allowed text-black/[.4] group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white`}
+          class={`disabled:cursor-not-allowed text-[#727272]/90 group-hover:bg-[linear-gradient(90deg,#113046_0%,#2B6365_100%)] hover:text-white rounded-full p-2 dark:text-white border border-[#727272]/90`}
           ><Icon
             icon="material-symbols:grid-view-outline-rounded"
             class="h-[22px] w-[22px]"
@@ -773,7 +776,7 @@
     </Popover.Root>
     <!-- </LayoutDialog> -->
     <p
-      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#657274] text-black/[.4] dark:text-white"
+      class="text-xs group-hover:text-[#015a62] dark:group-hover:text-[#657274] text-[#727272]/90 dark:text-white"
     >
       Layouts
     </p>
